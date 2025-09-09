@@ -36,10 +36,9 @@ class PlaywrightEngine:
         try:
             self.playwright = await async_playwright().start()
             
-            # Configurações do browser - VISÍVEL para debug
+            # Configurações do browser - OTIMIZADO para performance
             self.browser = await self.playwright.chromium.launch(
-                headless=False,  # NAVEGADOR VISÍVEL!
-                slow_mo=1000,    # Slow motion para ver o que acontece
+                headless=True,   # Navegador invisível para performance
                 args=self.config.get_playwright_args()
             )
             
@@ -80,56 +79,26 @@ class PlaywrightEngine:
     async def navigate_to_page(self, url: str, wait_for_selector: str = None) -> bool:
         """Navegar para uma página com tratamento de erros"""
         try:
-            print(f"🌐 NAVEGANDO PARA: {url}")
-            print(f"⏳ Aguarde, o navegador será aberto...")
-            
-            # Navegar
-            print("🚀 Carregando página...")
+            # Navegar diretamente sem logs verbosos
             response = await self.page.goto(url, wait_until='domcontentloaded', timeout=60000)
             
             if not response or response.status >= 400:
-                print(f"❌ Erro HTTP: {response.status if response else 'Sem resposta'}")
                 return False
                 
-            print(f"✅ Página carregada! Status: {response.status}")
+            # Aguardar JavaScript carregar (reduzido)
+            await asyncio.sleep(2)
             
-            # Aguardar um pouco mais para carregar JavaScript
-            print("⏳ Aguardando JavaScript carregar...")
-            await asyncio.sleep(3)
-            
-            # Verificar se a página tem conteúdo
-            title = await self.page.title()
-            print(f"📄 Título da página: {title}")
-            
-            # Contornar proteções
-            print("🛡️ Verificando proteções anti-bot...")
-            if not await StealthMode.bypass_cloudflare(self.page):
-                print("⚠️ Possível bloqueio detectado")
-            
-            # Aguardar carregamento completo
-            print("⏳ Aguardando carregamento completo...")
-            if not await StealthMode.wait_for_page_load(self.page):
-                print("⚠️ Timeout no carregamento da página")
+            # Contornar proteções silenciosamente
+            await StealthMode.bypass_cloudflare(self.page)
+            await StealthMode.wait_for_page_load(self.page)
             
             # Aguardar seletor específico se fornecido
             if wait_for_selector:
-                print(f"🔍 Procurando seletor: {wait_for_selector}")
                 try:
-                    await self.page.wait_for_selector(wait_for_selector, timeout=15000)
-                    print(f"✅ Seletor encontrado!")
+                    await self.page.wait_for_selector(wait_for_selector, timeout=10000)
                 except:
-                    print(f"⚠️ Seletor {wait_for_selector} não encontrado")
+                    pass  # Continuar mesmo sem o seletor
             
-            # Tirar screenshot para debug
-            print("📸 Salvando screenshot...")
-            await self.page.screenshot(path=f"debug_screenshot_{asyncio.get_event_loop().time():.0f}.png")
-            
-            # Simular comportamento humano
-            print("🤖 Simulando comportamento humano...")
-            await StealthMode.random_mouse_movement(self.page)
-            await StealthMode.human_scroll(self.page)
-            
-            print("✅ Navegação completa!")
             return True
             
         except Exception as e:
@@ -142,8 +111,8 @@ class PlaywrightEngine:
             return []
         
         try:
-            # Aguardar produtos carregarem
-            await asyncio.sleep(random.uniform(2, 4))
+            # Aguardar produtos carregarem (otimizado)
+            await asyncio.sleep(1)
             
             # Obter HTML da página
             content = await self.page.content()
@@ -165,23 +134,15 @@ class PlaywrightEngine:
                 elements = soup.select(selector)
                 
                 if elements and len(elements) > 5:  # Só usar seletores com muitos resultados
-                    print(f"✅ Usando seletor: {selector} ({len(elements)} produtos)")
-                    
-                    valid_products = 0
                     for element in elements[:50]:  # Limitar para evitar sobrecarga
                         product = await self._extract_single_product(element)
                         if product:
                             products.append(product)
-                            valid_products += 1
-                    
-                    print(f"📦 Validados {valid_products} produtos de {len(elements)} elementos")
                     break
             
-            print(f"📦 Extraídos {len(products)} produtos da página")
             return products
             
         except Exception as e:
-            print(f"❌ Erro ao extrair produtos: {e}")
             return []
     
     async def _extract_single_product(self, element) -> Optional[Product]:
@@ -305,7 +266,6 @@ class PlaywrightEngine:
             return Product(**product_data)
             
         except Exception as e:
-            print(f"⚠️ Erro ao extrair produto: {e}")
             return None
     
     async def search_products(self, query: str, max_products: int = 50) -> List[Product]:
@@ -320,19 +280,16 @@ class PlaywrightEngine:
             if page_num > 1:
                 search_url += f"_Desde_{offset + 1}"
             
-            print(f"🔍 Buscando página {page_num}: {query}")
-            
             page_products = await self.extract_products_from_page(search_url)
             
             if not page_products:
-                print(f"❌ Nenhum produto encontrado na página {page_num}")
                 break
             
             products.extend(page_products)
             page_num += 1
             
-            # Delay entre páginas
-            await asyncio.sleep(random.uniform(2, 4))
+            # Delay mínimo entre páginas
+            await asyncio.sleep(1)
         
         return products[:max_products]
     
@@ -354,31 +311,45 @@ class PlaywrightEngine:
             if page_num > 1:
                 category_url += f"#D[A:{offset + 1}]"
             
-            print(f"🏷️ Buscando categoria '{category}' - página {page_num}")
-            
             page_products = await self.extract_products_from_page(category_url)
             
             if not page_products:
-                print(f"❌ Nenhum produto encontrado na página {page_num}")
                 break
             
             products.extend(page_products)
             page_num += 1
             
-            # Delay entre páginas
-            await asyncio.sleep(random.uniform(2, 4))
+            # Delay mínimo entre páginas
+            await asyncio.sleep(1)
         
         return products[:max_products]
     
     async def search_offers(self, max_products: int = 50) -> List[Product]:
-        """Buscar produtos em oferta"""
-        offers_url = f"{self.config.BASE_URL}/ofertas"
+        """Buscar produtos em oferta percorrendo múltiplas páginas"""
+        products = []
+        page_num = 1
         
-        print("🔥 Buscando ofertas do Mercado Livre")
+        while len(products) < max_products and page_num <= 5:
+            # URL das ofertas com paginação
+            if page_num == 1:
+                offers_url = f"{self.config.BASE_URL}/ofertas"
+            else:
+                offset = (page_num - 1) * 50
+                offers_url = f"{self.config.BASE_URL}/ofertas#D[A:{offset + 1}]"
+            
+            page_products = await self.extract_products_from_page(offers_url)
+            
+            if not page_products:
+                break
+            
+            # Filtrar apenas produtos com desconto real
+            promotion_products = [p for p in page_products if p.original_price and p.discount_percentage > 0]
+            products.extend(promotion_products)
+            
+            page_num += 1
+            
+            # Delay mínimo entre páginas
+            if page_num <= 5:  # Só delay se vai continuar
+                await asyncio.sleep(1)
         
-        products = await self.extract_products_from_page(offers_url)
-        
-        # Filtrar apenas produtos com desconto
-        promotion_products = [p for p in products if p.is_promotion or p.original_price]
-        
-        return promotion_products[:max_products]
+        return products[:max_products]

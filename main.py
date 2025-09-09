@@ -166,7 +166,7 @@ class ModernScraperCLI:
         table.add_column("Link", style="blue", justify="left", width=15)
         table.add_column("Frete", style="green", justify="center", width=8)
         
-        for i, product in enumerate(products[:20], 1):  # Mostrar apenas primeiros 20
+        for i, product in enumerate(products, 1):  # Mostrar todos os produtos coletados
             # Nome (truncado para nova largura)
             name = product.name[:32] + "..." if len(product.name) > 35 else product.name
             
@@ -320,7 +320,7 @@ class ModernScraperCLI:
         console.print("\n[bold cyan]🔗 Links Completos dos Produtos[/bold cyan]")
         console.print()
         
-        for i, product in enumerate(products[:20], 1):
+        for i, product in enumerate(products, 1):
             if product.url:
                 # Nome truncado
                 name = product.name[:45] + "..." if len(product.name) > 45 else product.name
@@ -340,7 +340,7 @@ class ModernScraperCLI:
         """Abrir produto específico no navegador"""
         try:
             num = Prompt.ask(
-                f"\n[cyan]Digite o número do produto (1-{len(products[:20])})[/cyan]",
+                f"\n[cyan]Digite o número do produto (1-{len(products)})[/cyan]",
                 default="1"
             )
             
