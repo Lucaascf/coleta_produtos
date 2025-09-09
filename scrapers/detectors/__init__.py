@@ -1,0 +1,1 @@
+# Detectores inteligentes de produtos
