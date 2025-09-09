@@ -160,22 +160,41 @@ class ModernScraperCLI:
         # Tabela de produtos
         table = Table(box=box.ROUNDED, title=f"[bold]{title}[/bold]")
         table.add_column("#", style="bold yellow", width=3)
-        table.add_column("Nome", style="cyan", max_width=40)
-        table.add_column("Preço", style="bold green", justify="right", width=12)
-        table.add_column("Desconto", style="red", justify="center", width=8)
+        table.add_column("Nome", style="cyan", max_width=35)
+        table.add_column("Preços", style="bold green", justify="right", width=18)
+        table.add_column("Desconto", style="red", justify="center", width=10)
         table.add_column("Link", style="blue", justify="left", width=15)
         table.add_column("Frete", style="green", justify="center", width=8)
         
         for i, product in enumerate(products[:20], 1):  # Mostrar apenas primeiros 20
             # Nome (truncado para nova largura)
-            name = product.name[:37] + "..." if len(product.name) > 40 else product.name
+            name = product.name[:32] + "..." if len(product.name) > 35 else product.name
             
-            # Preço
-            price_str = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.') if product.price else "N/A"
+            # Preços - Mostrar de/por quando há desconto
+            if product.original_price and product.original_price > product.price:
+                # Formato: ~~R$ 899~~ R$ 488
+                original_formatted = f"R$ {product.original_price:,.0f}".replace(',', '.')
+                current_formatted = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                from rich.text import Text
+                price_display = Text()
+                price_display.append(f"~~{original_formatted}~~", style="dim strikethrough")
+                price_display.append(f" {current_formatted}", style="bold green")
+            else:
+                # Só preço atual
+                price_display = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.') if product.price else "N/A"
             
-            # Desconto
-            discount_str = f"{product.discount_percentage:.0f}%" if product.discount_percentage > 0 else "-"
-            discount_style = "bold red" if product.discount_percentage > 0 else "dim"
+            # Desconto com emoji para destaque
+            if product.discount_percentage > 0:
+                if product.discount_percentage >= 50:
+                    discount_str = f"🔥 {product.discount_percentage:.0f}%"
+                elif product.discount_percentage >= 30:
+                    discount_str = f"🟡 {product.discount_percentage:.0f}%"
+                else:
+                    discount_str = f"{product.discount_percentage:.0f}%"
+                discount_style = "bold red"
+            else:
+                discount_str = "-"
+                discount_style = "dim"
             
             # Link clicável do produto
             if product.url:
@@ -194,7 +213,7 @@ class ModernScraperCLI:
             table.add_row(
                 str(i),
                 name,
-                price_str,
+                price_display,
                 Text(discount_str, style=discount_style),
                 link_display,
                 Text(shipping_str, style=shipping_style)
@@ -205,6 +224,7 @@ class ModernScraperCLI:
         # Estatísticas
         if len(products) > 1:
             prices = [p.price for p in products if p.price]
+            with_discount = [p for p in products if p.discount_percentage > 0]
             promotions = len([p for p in products if p.is_promotion])
             free_shipping = len([p for p in products if p.free_shipping])
             
@@ -217,7 +237,19 @@ class ModernScraperCLI:
                 stats_table.add_row("📈 Maior preço:", f"R$ {max(prices):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
                 stats_table.add_row("📉 Menor preço:", f"R$ {min(prices):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
             
-            stats_table.add_row("🔥 Promoções:", f"{promotions} ({promotions/len(products)*100:.1f}%)")
+            # Estatísticas de desconto
+            if with_discount:
+                avg_discount = sum(p.discount_percentage for p in with_discount) / len(with_discount)
+                max_discount = max(p.discount_percentage for p in with_discount)
+                stats_table.add_row("🏷️ Produtos com desconto:", f"{len(with_discount)} ({len(with_discount)/len(products)*100:.1f}%)")
+                stats_table.add_row("📊 Desconto médio:", f"{avg_discount:.1f}%")
+                stats_table.add_row("🔥 Maior desconto:", f"{max_discount:.1f}%")
+                
+                # Economia total
+                total_saved = sum((p.original_price - p.price) for p in with_discount if p.original_price)
+                if total_saved > 0:
+                    stats_table.add_row("💵 Economia total:", f"R$ {total_saved:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
+            
             stats_table.add_row("🚚 Frete grátis:", f"{free_shipping} ({free_shipping/len(products)*100:.1f}%)")
             
             stats_panel = Panel(

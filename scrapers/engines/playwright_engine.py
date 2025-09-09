@@ -211,9 +211,10 @@ class PlaywrightEngine:
             # Preço atual - buscar especificamente preço não riscado
             price = None
             price_selectors = [
-                '.poly-price__current .andes-money-amount__fraction',  # Preço atual nas ofertas
+                '.poly-price__current .andes-money-amount__fraction',  # Preço atual nas ofertas - CORRETO
+                '.andes-money-amount--cents-superscript .andes-money-amount__fraction',  # Preço atual alternativo
                 '.ui-search-price__second-line .andes-money-amount__fraction',  # Busca normal
-                '.poly-component__price .andes-money-amount__fraction:not(s .andes-money-amount__fraction)',  # Não riscado
+                '.poly-component__price .andes-money-amount:not(.andes-money-amount--previous) .andes-money-amount__fraction',  # Não riscado
                 '.andes-money-amount:not(.andes-money-amount--previous) .andes-money-amount__fraction'
             ]
             
@@ -225,22 +226,31 @@ class PlaywrightEngine:
                     if price and price > 10:  # Validar preço mínimo razoável
                         break
             
-            # Preço original (se em promoção) - buscar preços riscados
+            # Preço original (se em promoção) - buscar preços riscados - ATUALIZADOS
             original_price = None
             original_selectors = [
-                's.andes-money-amount .andes-money-amount__fraction',  # Ofertas - preço riscado
-                '.andes-money-amount--previous .andes-money-amount__fraction',  # Preço anterior
+                's.andes-money-amount.andes-money-amount--previous .andes-money-amount__fraction',  # CORRETO - Ofertas
+                's.andes-money-amount--previous .andes-money-amount__fraction',  # Variação
+                '.andes-money-amount--previous .andes-money-amount__fraction',  # Preço anterior genérico
                 '.ui-search-price__original-value .andes-money-amount__fraction',  # Busca normal
-                'del .andes-money-amount__fraction'
+                's .andes-money-amount__fraction',  # Qualquer elemento riscado
+                'del .andes-money-amount__fraction'  # Elemento deletado
             ]
             
             for selector in original_selectors:
                 orig_elem = element.select_one(selector)
                 if orig_elem:
                     original_text = orig_elem.get_text(strip=True)
-                    original_price = DataProcessor.clean_price(original_text)
-                    if original_price and original_price > 10:
-                        break
+                    potential_original = DataProcessor.clean_price(original_text)
+                    
+                    # VALIDAÇÃO CRÍTICA: preço original deve ser > preço atual
+                    if potential_original and potential_original > 10:
+                        if price and potential_original > price:
+                            original_price = potential_original
+                            break
+                        elif not price:  # Se ainda não temos preço atual, aceitar
+                            original_price = potential_original
+                            break
             
             # URL do produto - buscar especificamente links de produtos
             product_url = None

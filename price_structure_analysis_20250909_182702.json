@@ -1,0 +1,3880 @@
+{
+  "analysis_date": "2025-09-09T18:26:40.893837",
+  "pages_analyzed": [
+    "https://www.mercadolivre.com.br/ofertas",
+    "https://lista.mercadolivre.com.br/air-fryer",
+    "https://lista.mercadolivre.com.br/smartphone",
+    "https://www.mercadolivre.com.br/c/MLB1055"
+  ],
+  "price_structures": [
+    {
+      "url": "https://www.mercadolivre.com.br/ofertas",
+      "product_index": 0,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 899 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$899",
+          "html": "<s aria-label=\"Antes: 899 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:12px\"><span aria-hidd"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "899",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">899</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$48845% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Ahora: 488 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><s"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$488",
+          "html": "<span aria-label=\"Ahora: 488 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><span aria-hidden=\"true\" class=\"and"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "488",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">488</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "45% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size:14px\">45% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "10xR$48,80sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color:#00a650\">10x <span aria-label=\"48 reales con 80 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amoun"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$48,80",
+          "html": "<span aria-label=\"48 reales con 80 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:inherit\"><span aria-h"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "48",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">48</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "80",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">80</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$48845% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "45% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$48,80",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "48",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "80",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://www.mercadolivre.com.br/ofertas",
+      "product_index": 1,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.855R$1.04943% OFF no PixouR$1.178em18xR$65,49sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1855 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" st"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.855",
+          "html": "<s aria-label=\"Antes: 1855 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:12px\"><span aria-hid"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.855",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.855</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$1.04943% OFF no Pix",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Ahora: 1049 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$1.049",
+          "html": "<span aria-label=\"Ahora: 1049 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.049",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.049</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "43% OFF no Pix",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">43% OFF no Pix</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$1.178em18xR$65,49sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color:#00a650\"><span class=\"poly-phrase-label\" style=\"color:#000000e6\">ou</span> <span style=\"color:#000000e6\"><span aria-label=\"1178 reales\" aria-roledes"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.178",
+          "html": "<span aria-label=\"1178 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:inherit\"><span aria-hidden=\"true\" c"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.178",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.178</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$65,49",
+          "html": "<span aria-label=\"65 reales con 49 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:inherit\"><span aria-h"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "65",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">65</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "49",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">49</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.855R$1.04943% OFF no PixouR$1.178em18xR$65,49sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.855",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.855",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$1.04943% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$1.049",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.049",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "43% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$1.178em18xR$65,49sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$1.178",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.178",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$65,49",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "65",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "49",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://www.mercadolivre.com.br/ofertas",
+      "product_index": 2,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$445,88R$29932% OFF12xR$29,25",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 445 reales con 88 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$445,88",
+          "html": "<s aria-label=\"Antes: 445 reales con 88 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:12px\""
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "445",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">445</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "88",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">88</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$29932% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Ahora: 299 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><s"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$299",
+          "html": "<span aria-label=\"Ahora: 299 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><span aria-hidden=\"true\" class=\"and"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "299",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">299</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "32% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size:14px\">32% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "12xR$29,25",
+          "html": "<span class=\"poly-price__installments\" style=\"color:#000000e6\">12x <span aria-label=\"29 reales con 25 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amo"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$29,25",
+          "html": "<span aria-label=\"29 reales con 25 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:inherit\"><span aria-h"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "29",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">29</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "25",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">25</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$445,88R$29932% OFF12xR$29,25",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$445,88",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "445",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "88",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$29932% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$299",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "299",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "32% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "12xR$29,25",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$29,25",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "29",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "25",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://www.mercadolivre.com.br/ofertas",
+      "product_index": 3,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$210,59R$116,4444% OFF",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 210 reales con 59 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$210,59",
+          "html": "<s aria-label=\"Antes: 210 reales con 59 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:12px\""
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "210",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">210</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "59",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">59</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$116,4444% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Ahora: 116 reales con 44 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fo"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$116,44",
+          "html": "<span aria-label=\"Ahora: 116 reales con 44 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><span aria-hidden=\""
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "116",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">116</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "44",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size:12px;margin-top:4px\">44</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "44% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size:14px\">44% OFF</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$210,59R$116,4444% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$210,59",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "210",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "59",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$116,4444% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$116,44",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "116",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "44",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "44% OFF",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://www.mercadolivre.com.br/ofertas",
+      "product_index": 4,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.526R$1.09628% OFF18xR$60,94sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1526 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" st"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.526",
+          "html": "<s aria-label=\"Antes: 1526 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:12px\"><span aria-hid"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.526",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.526</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$1.09628% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Ahora: 1096 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$1.096",
+          "html": "<span aria-label=\"Ahora: 1096 reales\" aria-roledescription=\"Monto\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size:24px\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.096",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.096</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "28% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size:14px\">28% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "18xR$60,94sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color:#00a650\">18x <span aria-label=\"60 reales con 94 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amoun"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$60,94",
+          "html": "<span aria-label=\"60 reales con 94 centavos\" aria-roledescription=\"Monto\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size:inherit\"><span aria-h"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "60",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">60</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "94",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">94</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.526R$1.09628% OFF18xR$60,94sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.526",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.526",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$1.09628% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$1.096",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.096",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "28% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "18xR$60,94sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$60,94",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "60",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "94",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/air-fryer",
+      "product_index": 0,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$281,25R$20427% OFF",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 281 reais com 25 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\""
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$281,25",
+          "html": "<s aria-label=\"Antes: 281 reais com 25 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "281",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">281</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "25",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">25</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$20427% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 204 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$204",
+          "html": "<span aria-label=\"Agora: 204 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "204",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">204</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "27% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">27% OFF</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$281,25R$20427% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$281,25",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "281",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "25",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$20427% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$204",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "204",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "27% OFF",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/air-fryer",
+      "product_index": 1,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$599,86R$396,9033% OFF12xR$38,83",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 599 reais com 86 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\""
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$599,86",
+          "html": "<s aria-label=\"Antes: 599 reais com 86 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "599",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">599</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "86",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">86</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$396,9033% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 396 reais com 90 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$396,90",
+          "html": "<span aria-label=\"Agora: 396 reais com 90 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "396",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">396</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "90",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">90</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "33% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">33% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "12xR$38,83",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgba(0, 0, 0, 0.9);\">12x <span aria-label=\"38 reais com 83 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$38,83",
+          "html": "<span aria-label=\"38 reais com 83 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "38",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">38</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "83",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">83</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$599,86R$396,9033% OFF12xR$38,83",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$599,86",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "599",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "86",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$396,9033% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$396,90",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "396",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "90",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "33% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "12xR$38,83",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$38,83",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "38",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "83",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/air-fryer",
+      "product_index": 2,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" styl"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$899",
+          "html": "<s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hid"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "899",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">899</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$48845% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 488 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$488",
+          "html": "<span aria-label=\"Agora: 488 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "488",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">488</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "45% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">45% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "10xR$48,80sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\">10x <span aria-label=\"48 reais com 80 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-mo"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$48,80",
+          "html": "<span aria-label=\"48 reais com 80 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "48",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">48</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "80",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">80</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$48845% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "45% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$48,80",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "48",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "80",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/air-fryer",
+      "product_index": 3,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$921,55R$54940% OFF18xR$30,50sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 921 reais com 55 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\""
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$921,55",
+          "html": "<s aria-label=\"Antes: 921 reais com 55 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "921",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">921</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "55",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">55</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$54940% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 549 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$549",
+          "html": "<span aria-label=\"Agora: 549 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "549",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">549</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "40% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">40% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "18xR$30,50sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\">18x <span aria-label=\"30 reais com 50 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-mo"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$30,50",
+          "html": "<span aria-label=\"30 reais com 50 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "30",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">30</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "50",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">50</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$921,55R$54940% OFF18xR$30,50sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$921,55",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "921",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "55",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$54940% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$549",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "549",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "40% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "18xR$30,50sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$30,50",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "30",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "50",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/air-fryer",
+      "product_index": 4,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" styl"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$899",
+          "html": "<s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hid"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "899",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">899</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$48845% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 488 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$488",
+          "html": "<span aria-label=\"Agora: 488 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "488",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">488</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "45% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">45% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "10xR$48,80sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\">10x <span aria-label=\"48 reais com 80 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-mo"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$48,80",
+          "html": "<span aria-label=\"48 reais com 80 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "48",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">48</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "80",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">80</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$899R$48845% OFF10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$48845% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "488",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "45% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "10xR$48,80sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$48,80",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "48",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "80",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/smartphone",
+      "product_index": 0,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$899R$583,6935% OFF no Pix ou Saldo no Mercado PagoouR$648,54em11xR$58,96sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" styl"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$899",
+          "html": "<s aria-label=\"Antes: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hid"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "899",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">899</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$583,6935% OFF no Pix ou Saldo no Mercado Pago",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 583 reais com 69 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$583,69",
+          "html": "<span aria-label=\"Agora: 583 reais com 69 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "583",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">583</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "69",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">69</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "35% OFF no Pix ou Saldo no Mercado Pago",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">35% OFF no Pix ou Saldo no Mercado Pago</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$648,54em11xR$58,96sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\"><span class=\"poly-phrase-label\" style=\"color: rgba(0, 0, 0, 0.9);\">ou</span> <span style=\"color: rgba(0, 0, 0, 0.9);\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$648,54",
+          "html": "<span aria-label=\"648 reais com 54 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "648",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">648</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "54",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">54</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$58,96",
+          "html": "<span aria-label=\"58 reais com 96 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "58",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">58</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "96",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">96</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$899R$583,6935% OFF no Pix ou Saldo no Mercado PagoouR$648,54em11xR$58,96sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "899",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$583,6935% OFF no Pix ou Saldo no Mercado Pago",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$583,69",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "583",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "69",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "35% OFF no Pix ou Saldo no Mercado Pago",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$648,54em11xR$58,96sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$648,54",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "648",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "54",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$58,96",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "58",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "96",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/smartphone",
+      "product_index": 1,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$4.299R$2.53640% OFF no Pix ou Saldo no Mercado PagoouR$2.818em21xR$134,23sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 4299 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$4.299",
+          "html": "<s aria-label=\"Antes: 4299 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "4.299",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">4.299</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$2.53640% OFF no Pix ou Saldo no Mercado Pago",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 2536 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\">"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$2.536",
+          "html": "<span aria-label=\"Agora: 2536 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"a"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "2.536",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">2.536</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "40% OFF no Pix ou Saldo no Mercado Pago",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">40% OFF no Pix ou Saldo no Mercado Pago</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$2.818em21xR$134,23sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\"><span class=\"poly-phrase-label\" style=\"color: rgba(0, 0, 0, 0.9);\">ou</span> <span style=\"color: rgba(0, 0, 0, 0.9);\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$2.818",
+          "html": "<span aria-label=\"2818 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-hidden=\"true\" "
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "2.818",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">2.818</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$134,23",
+          "html": "<span aria-label=\"134 reais com 23 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "134",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">134</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "23",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">23</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$4.299R$2.53640% OFF no Pix ou Saldo no Mercado PagoouR$2.818em21xR$134,23sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$4.299",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "4.299",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$2.53640% OFF no Pix ou Saldo no Mercado Pago",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$2.536",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "2.536",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "40% OFF no Pix ou Saldo no Mercado Pago",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$2.818em21xR$134,23sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$2.818",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "2.818",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$134,23",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "134",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "23",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/smartphone",
+      "product_index": 2,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.112R$668,7139% OFF no PixouR$759,90em18xR$42,22sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1112 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.112",
+          "html": "<s aria-label=\"Antes: 1112 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.112",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.112</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$668,7139% OFF no Pix",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 668 reais com 71 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$668,71",
+          "html": "<span aria-label=\"Agora: 668 reais com 71 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "668",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">668</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "71",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">71</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "39% OFF no Pix",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">39% OFF no Pix</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$759,90em18xR$42,22sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\"><span class=\"poly-phrase-label\" style=\"color: rgba(0, 0, 0, 0.9);\">ou</span> <span style=\"color: rgba(0, 0, 0, 0.9);\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$759,90",
+          "html": "<span aria-label=\"759 reais com 90 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "759",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">759</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "90",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">90</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$42,22",
+          "html": "<span aria-label=\"42 reais com 22 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "42",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">42</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "22",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">22</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.112R$668,7139% OFF no PixouR$759,90em18xR$42,22sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.112",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.112",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$668,7139% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$668,71",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "668",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "71",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "39% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$759,90em18xR$42,22sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$759,90",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "759",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "90",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$42,22",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "42",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "22",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/smartphone",
+      "product_index": 3,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.522R$870,3242% OFF no PixouR$989em18xR$54,94sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1522 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.522",
+          "html": "<s aria-label=\"Antes: 1522 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.522",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.522</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$870,3242% OFF no Pix",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 870 reais com 32 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$870,32",
+          "html": "<span aria-label=\"Agora: 870 reais com 32 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "870",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">870</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "32",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">32</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "42% OFF no Pix",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">42% OFF no Pix</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$989em18xR$54,94sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\"><span class=\"poly-phrase-label\" style=\"color: rgba(0, 0, 0, 0.9);\">ou</span> <span style=\"color: rgba(0, 0, 0, 0.9);\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$989",
+          "html": "<span aria-label=\"989 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-hidden=\"true\" c"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "989",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">989</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$54,94",
+          "html": "<span aria-label=\"54 reais com 94 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "54",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">54</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "94",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">94</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.549R$901,6241% OFF10xR$100,18sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1549 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.549",
+          "html": "<s aria-label=\"Antes: 1549 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.549",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.549</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$901,6241% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 901 reais com 62 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$901,62",
+          "html": "<span aria-label=\"Agora: 901 reais com 62 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "901",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">901</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "62",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">62</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "41% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">41% OFF</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "10xR$100,18sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\">10x <span aria-label=\"100 reais com 18 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-m"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$100,18",
+          "html": "<span aria-label=\"100 reais com 18 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "100",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">100</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "18",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">18</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.522R$870,3242% OFF no PixouR$989em18xR$54,94sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.522",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.522",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$870,3242% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$870,32",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "870",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "32",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "42% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$989em18xR$54,94sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$989",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "989",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$54,94",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "54",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "94",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.549R$901,6241% OFF10xR$100,18sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.549",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.549",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$901,6241% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$901,62",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "901",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "62",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "41% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "10xR$100,18sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$100,18",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "100",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "18",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "url": "https://lista.mercadolivre.com.br/smartphone",
+      "product_index": 4,
+      "product_selector": ".poly-card",
+      "price_elements": [
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.324R$786,7240% OFF no PixouR$894em18xR$49,67sem juros",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1324 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.324",
+          "html": "<s aria-label=\"Antes: 1324 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.324",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.324</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$786,7240% OFF no Pix",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 786 reais com 72 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"fon"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$786,72",
+          "html": "<span aria-label=\"Agora: 786 reais com 72 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden="
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "786",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">786</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents",
+            "andes-money-amount__cents--superscript-24"
+          ],
+          "text": "72",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents andes-money-amount__cents--superscript-24\" style=\"font-size: 12px; margin-top: 4px;\">72</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount",
+            "poly-price__disc_label"
+          ],
+          "text": "40% OFF no Pix",
+          "html": "<span class=\"andes-money-amount__discount poly-price__disc_label\">40% OFF no Pix</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "poly-price__installments"
+          ],
+          "text": "ouR$894em18xR$49,67sem juros",
+          "html": "<span class=\"poly-price__installments\" style=\"color: rgb(0, 166, 80);\"><span class=\"poly-phrase-label\" style=\"color: rgba(0, 0, 0, 0.9);\">ou</span> <span style=\"color: rgba(0, 0, 0, 0.9);\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$894",
+          "html": "<span aria-label=\"894 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-hidden=\"true\" c"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "894",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">894</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "poly-phrase-price",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$49,67",
+          "html": "<span aria-label=\"49 reais com 67 centavos\" aria-roledescription=\"Valor\" class=\"andes-money-amount poly-phrase-price andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: inherit;\"><span aria-"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "49",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">49</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__cents"
+          ],
+          "text": "67",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__cents\">67</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-component__price"
+          ],
+          "text": "R$1.399R$89935% OFF",
+          "html": "<div class=\"poly-component__price\"><s aria-label=\"Antes: 1399 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" sty"
+        },
+        {
+          "tag": "s",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--previous",
+            "andes-money-amount--cents-comma"
+          ],
+          "text": "R$1.399",
+          "html": "<s aria-label=\"Antes: 1399 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--previous andes-money-amount--cents-comma\" role=\"img\" style=\"font-size: 12px;\"><span aria-hi"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "1.399",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">1.399</span>"
+        },
+        {
+          "tag": "div",
+          "classes": [
+            "poly-price__current"
+          ],
+          "text": "R$89935% OFF",
+          "html": "<div class=\"poly-price__current\"><span aria-label=\"Agora: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount",
+            "andes-money-amount--cents-superscript"
+          ],
+          "text": "R$899",
+          "html": "<span aria-label=\"Agora: 899 reais\" aria-roledescription=\"Valor\" class=\"andes-money-amount andes-money-amount--cents-superscript\" role=\"img\" style=\"font-size: 24px;\"><span aria-hidden=\"true\" class=\"an"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__currency-symbol"
+          ],
+          "text": "R$",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__currency-symbol\">R$</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__fraction"
+          ],
+          "text": "899",
+          "html": "<span aria-hidden=\"true\" class=\"andes-money-amount__fraction\">899</span>"
+        },
+        {
+          "tag": "span",
+          "classes": [
+            "andes-money-amount__discount"
+          ],
+          "text": "35% OFF",
+          "html": "<span class=\"andes-money-amount__discount\" style=\"font-size: 14px;\">35% OFF</span>"
+        }
+      ],
+      "price_candidates": [
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.324R$786,7240% OFF no PixouR$894em18xR$49,67sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.324",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.324",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$786,7240% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$786,72",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "786",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents.andes-money-amount__cents--superscript-24",
+          "text": "72",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount.poly-price__disc_label",
+          "text": "40% OFF no Pix",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.poly-price__installments",
+          "text": "ouR$894em18xR$49,67sem juros",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$894",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "894",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+          "text": "R$49,67",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "49",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__cents",
+          "text": "67",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-component__price",
+          "text": "R$1.399R$89935% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+          "text": "R$1.399",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "1.399",
+          "type": "original",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "div.poly-price__current",
+          "text": "R$89935% OFF",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+          "text": "R$899",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__currency-symbol",
+          "text": "R$",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__fraction",
+          "text": "899",
+          "type": "current",
+          "confidence": 0.8
+        },
+        {
+          "element_selector": "span.andes-money-amount__discount",
+          "text": "35% OFF",
+          "type": "current",
+          "confidence": 0.8
+        }
+      ]
+    }
+  ],
+  "selector_candidates": [
+    {
+      "selector": "span.andes-money-amount__currency-symbol",
+      "frequency": 54,
+      "type": "general"
+    },
+    {
+      "selector": "span.andes-money-amount__fraction",
+      "frequency": 54,
+      "type": "general"
+    },
+    {
+      "selector": "span.andes-money-amount__cents",
+      "frequency": 21,
+      "type": "general"
+    },
+    {
+      "selector": "span.andes-money-amount.poly-phrase-price.andes-money-amount--cents-comma",
+      "frequency": 20,
+      "type": "general"
+    },
+    {
+      "selector": "div.poly-component__price",
+      "frequency": 17,
+      "type": "general"
+    },
+    {
+      "selector": "s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+      "frequency": 17,
+      "type": "general"
+    },
+    {
+      "selector": "div.poly-price__current",
+      "frequency": 17,
+      "type": "general"
+    },
+    {
+      "selector": "span.andes-money-amount.andes-money-amount--cents-superscript",
+      "frequency": 17,
+      "type": "general"
+    },
+    {
+      "selector": "span.poly-price__installments",
+      "frequency": 14,
+      "type": "general"
+    },
+    {
+      "selector": "span.andes-money-amount__discount",
+      "frequency": 11,
+      "type": "general"
+    }
+  ],
+  "recommendations": [
+    "Seletor para preço original: s.andes-money-amount.andes-money-amount--previous.andes-money-amount--cents-comma",
+    "Seletor para preço atual: span.andes-money-amount__currency-symbol",
+    "Testar seletores em ordem de frequência encontrada",
+    "Implementar validação: preço_original > preço_atual",
+    "Adicionar fallbacks para diferentes tipos de página",
+    "Usar BeautifulSoup para análise mais robusta de elementos riscados"
+  ]
+}

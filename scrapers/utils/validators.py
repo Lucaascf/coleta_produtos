@@ -46,12 +46,13 @@ class Product(BaseModel):
                 raise ValueError(f"Preço muito alto: R$ {v:.2f}")
         return v
     
-    @validator('discount_percentage')
+    @validator('discount_percentage', always=True)
     def validate_discount(cls, v, values):
         """Calcular desconto automaticamente"""
         original = values.get('original_price')
         current = values.get('price')
         
+        # Sempre calcular o desconto baseado nos preços, ignorando v
         if original and current and original > current:
             return round(((original - current) / original) * 100, 2)
         
