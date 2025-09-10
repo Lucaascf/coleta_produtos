@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from ..config import ScraperConfig
 from ..utils.stealth import StealthMode
-from ..utils.validators import Product, DataProcessor
+from ..utils.validators import Product, DataProcessor, ProductClassifier
 
 class PlaywrightEngine:
     """Engine principal usando Playwright com recursos anti-detecção"""
@@ -21,6 +21,9 @@ class PlaywrightEngine:
         self.context: Optional[BrowserContext] = None
         self.page: Optional[Page] = None
         self.config = ScraperConfig()
+        
+        # Cache de categorias para evitar requisições repetidas
+        self.category_cache = {}
         
     async def __aenter__(self):
         """Context manager entry"""
@@ -133,7 +136,7 @@ class PlaywrightEngine:
             for selector in product_selectors:
                 elements = soup.select(selector)
                 
-                if elements and len(elements) > 5:  # Só usar seletores com muitos resultados
+                if elements and len(elements) > 1:  # Só usar seletores com produtos válidos
                     for element in elements[:50]:  # Limitar para evitar sobrecarga
                         product = await self._extract_single_product(element)
                         if product:
@@ -145,6 +148,81 @@ class PlaywrightEngine:
         except Exception as e:
             return []
     
+    async def extract_category_from_product_page(self, product_url: str) -> tuple[Optional[str], float]:
+        """Extrair categoria real da página individual do produto via breadcrumb"""
+        if not product_url:
+            return None, 0.0
+        
+        # Verificar cache primeiro
+        url_key = product_url.split('?')[0]  # Remover parâmetros da URL
+        if url_key in self.category_cache:
+            cached_result = self.category_cache[url_key]
+            return cached_result['category'], cached_result['confidence']
+        
+        try:
+            # Navegar para página do produto
+            response = await self.page.goto(product_url, wait_until='domcontentloaded', timeout=30000)
+            if not response or response.status >= 400:
+                return None, 0.0
+            
+            # Aguardar página carregar
+            await asyncio.sleep(1)
+            
+            # Buscar breadcrumb com categoria real
+            breadcrumb_selectors = [
+                '.andes-breadcrumb__item a',  # Breadcrumb padrão
+                '.ui-navigation-link',        # Navegação alternativa
+                '.breadcrumb a',              # Breadcrumb genérico
+                '[data-testid="breadcrumb"] a'  # Breadcrumb com test-id
+            ]
+            
+            for selector in breadcrumb_selectors:
+                elements = await self.page.query_selector_all(selector)
+                if elements and len(elements) > 1:  # Pular "Início"
+                    for element in elements[1:]:  # Começar do segundo item
+                        text = await element.inner_text()
+                        if text and len(text.strip()) > 3:
+                            # Limpar e formatar categoria
+                            category = text.strip()
+                            # Pular termos muito genéricos
+                            if category.lower() not in ['início', 'home', 'mercado livre', 'ml']:
+                                # Adicionar ao cache
+                                self.category_cache[url_key] = {
+                                    'category': category,
+                                    'confidence': 0.9
+                                }
+                                return category, 0.9  # Alta confiança para breadcrumb
+            
+            # Fallback: buscar na meta description ou title
+            title = await self.page.title()
+            if title and 'mercado livre' in title.lower():
+                # Tentar extrair categoria do title
+                parts = title.split('|')
+                if len(parts) > 1:
+                    potential_category = parts[-1].strip()
+                    if potential_category != 'Mercado Livre':
+                        # Adicionar ao cache
+                        self.category_cache[url_key] = {
+                            'category': potential_category,
+                            'confidence': 0.6
+                        }
+                        return potential_category, 0.6
+            
+            # Cache resultado negativo para evitar tentar novamente
+            self.category_cache[url_key] = {
+                'category': None,
+                'confidence': 0.0
+            }
+            return None, 0.0
+            
+        except Exception as e:
+            # Cache resultado negativo para evitar tentar novamente
+            self.category_cache[url_key] = {
+                'category': None,
+                'confidence': 0.0
+            }
+            return None, 0.0
+
     async def _extract_single_product(self, element) -> Optional[Product]:
         """Extrair dados de um único produto"""
         try:
@@ -251,6 +329,32 @@ class PlaywrightEngine:
             if not all([name, price, product_url]):
                 return None
             
+            # Classificar produto automaticamente
+            # Primeiro: tentar extrair categoria real da página do produto
+            real_category, real_confidence = None, 0.0
+            if product_url and len(product_url) < 200:  # Evitar URLs muito longas
+                try:
+                    real_category, real_confidence = await self.extract_category_from_product_page(product_url)
+                except:
+                    pass
+            
+            # Segundo: usar sistema de palavras-chave como fallback
+            fallback_category, fallback_confidence = ProductClassifier.classify_product(
+                name=name,
+                url=product_url,
+                description=""
+            )
+            
+            # Escolher melhor classificação
+            if real_category and real_confidence > 0.8:
+                category, category_confidence = real_category, real_confidence
+            elif fallback_category and fallback_confidence > real_confidence:
+                category, category_confidence = fallback_category, fallback_confidence
+            elif real_category:
+                category, category_confidence = real_category, real_confidence
+            else:
+                category, category_confidence = fallback_category, fallback_confidence
+            
             # Criar produto
             product_data = {
                 'name': name,
@@ -260,7 +364,9 @@ class PlaywrightEngine:
                 'image_url': image_url,
                 'is_promotion': is_promotion,
                 'free_shipping': free_shipping,
-                'product_id': DataProcessor.extract_product_id(product_url) if product_url else None
+                'product_id': DataProcessor.extract_product_id(product_url) if product_url else None,
+                'category': category,
+                'category_confidence': category_confidence
             }
             
             return Product(**product_data)
@@ -293,9 +399,194 @@ class PlaywrightEngine:
         
         return products[:max_products]
     
+    def _filter_relevant_products(self, products: List[Product], search_term: str) -> List[Product]:
+        """Filtrar produtos relevantes baseado no termo de busca"""
+        if not search_term:
+            return products
+        
+        search_words = search_term.lower().split()
+        relevant_products = []
+        
+        for product in products:
+            if not product.name:
+                continue
+            
+            product_name = product.name.lower()
+            
+            # Calcular relevância - quantas palavras do termo aparecem no nome
+            matches = sum(1 for word in search_words if word in product_name)
+            relevance_score = matches / len(search_words)
+            
+            # Aceitar produtos com pelo menos 20% de relevância (mais flexível)
+            if relevance_score >= 0.2:
+                relevant_products.append(product)
+            # Ou se o nome contém o termo completo
+            elif search_term.lower() in product_name:
+                relevant_products.append(product)
+            # Ou se contém palavras-chave principais (primeira palavra é mais importante)
+            elif search_words and search_words[0] in product_name:
+                relevant_products.append(product)
+        
+        return relevant_products
+    
+    async def search_products_with_progress(self, query: str, max_products: int = 50, progress_callback=None) -> List[Product]:
+        """Buscar produtos por termo com callback de progresso"""
+        products = []
+        page_num = 1
+        
+        while len(products) < max_products and page_num <= 5:
+            # Callback de progresso
+            if progress_callback:
+                progress_callback(len(products), max_products, f"Buscando '{query}' - página {page_num}...")
+            
+            # URL de busca
+            offset = (page_num - 1) * 50
+            search_url = f"{self.config.SEARCH_BASE}/{query.replace(' ', '-')}"
+            if page_num > 1:
+                search_url += f"_Desde_{offset + 1}"
+            
+            page_products = await self.extract_products_from_page(search_url)
+            
+            if not page_products:
+                break
+            
+            # Filtrar produtos relevantes
+            relevant_products = self._filter_relevant_products(page_products, query)
+            products.extend(relevant_products)
+            page_num += 1
+            
+            # Delay mínimo entre páginas
+            await asyncio.sleep(1)
+        
+        # Callback final
+        if progress_callback:
+            progress_callback(len(products), max_products, f"Finalizando busca...")
+        
+        return products[:max_products]
+    
+    def _find_category_id(self, category: str) -> str:
+        """Encontrar ID da categoria de forma inteligente"""
+        if not category:
+            return None
+        
+        # Primeiro: busca exata (case-sensitive)
+        if category in self.config.CATEGORIES:
+            return self.config.CATEGORIES[category]
+        
+        # Segundo: busca case-insensitive
+        for cat_name, cat_id in self.config.CATEGORIES.items():
+            if cat_name.lower() == category.lower():
+                return cat_id
+        
+        # Terceiro: busca por palavras-chave (compatibilidade com nomes antigos)
+        category_mappings = {
+            'eletronicos': 'Eletrônicos, Áudio e Vídeo',
+            'celulares': 'Celulares e Telefones',
+            'informatica': 'Informática',
+            'casa': 'Casa, Móveis e Decoração',
+            'eletrodomesticos': 'Eletrodomésticos e Casa',
+            'moda': 'Roupas e Calçados',
+            'esportes': 'Esportes e Fitness',
+            'livros': 'Livros, Revistas e Comics',
+            'beleza': 'Saúde e Beleza',
+            'games': 'Games',
+            'automotivo': 'Carros, Motos e Outros',
+            'relogios': 'Relógios e Joias'
+        }
+        
+        category_lower = category.lower()
+        if category_lower in category_mappings:
+            real_name = category_mappings[category_lower]
+            return self.config.CATEGORIES.get(real_name)
+        
+        # Quarto: busca parcial (se a categoria contém palavras-chave)
+        for cat_name, cat_id in self.config.CATEGORIES.items():
+            if any(word in cat_name.lower() for word in category_lower.split()):
+                return cat_id
+        
+        return None
+
+    async def search_category_with_progress(self, category: str, max_products: int = 50, progress_callback=None) -> List[Product]:
+        """Buscar produtos por categoria com callback de progresso"""
+        category_id = self._find_category_id(category)
+        
+        if not category_id:
+            if progress_callback:
+                progress_callback(0, max_products, f"❌ Categoria '{category}' não encontrada")
+            return []
+        
+        products = []
+        page_num = 1
+        
+        while len(products) < max_products and page_num <= 5:
+            # Callback de progresso
+            if progress_callback:
+                progress_callback(len(products), max_products, f"Buscando categoria '{category}' - página {page_num}...")
+            
+            # URL da categoria
+            offset = (page_num - 1) * 50
+            category_url = f"{self.config.BASE_URL}/c/{category_id}"
+            if page_num > 1:
+                category_url += f"#D[A:{offset + 1}]"
+            
+            page_products = await self.extract_products_from_page(category_url)
+            
+            if not page_products:
+                break
+            
+            products.extend(page_products)
+            page_num += 1
+            
+            # Delay mínimo entre páginas
+            await asyncio.sleep(1)
+        
+        # Callback final
+        if progress_callback:
+            progress_callback(len(products), max_products, f"Finalizando busca por categoria...")
+        
+        return products[:max_products]
+    
+    async def search_offers_with_progress(self, max_products: int = 50, progress_callback=None) -> List[Product]:
+        """Buscar produtos em oferta com callback de progresso"""
+        products = []
+        page_num = 1
+        
+        while len(products) < max_products and page_num <= 5:
+            # Callback de progresso
+            if progress_callback:
+                progress_callback(len(products), max_products, f"Buscando ofertas - página {page_num}...")
+            
+            # URL das ofertas com paginação
+            if page_num == 1:
+                offers_url = f"{self.config.BASE_URL}/ofertas"
+            else:
+                offset = (page_num - 1) * 50
+                offers_url = f"{self.config.BASE_URL}/ofertas#D[A:{offset + 1}]"
+            
+            page_products = await self.extract_products_from_page(offers_url)
+            
+            if not page_products:
+                break
+            
+            # Filtrar apenas produtos com desconto real
+            promotion_products = [p for p in page_products if p.original_price and p.discount_percentage > 0]
+            products.extend(promotion_products)
+            
+            page_num += 1
+            
+            # Delay mínimo entre páginas
+            if page_num <= 5:  # Só delay se vai continuar
+                await asyncio.sleep(1)
+        
+        # Callback final
+        if progress_callback:
+            progress_callback(len(products), max_products, f"Finalizando busca de ofertas...")
+        
+        return products[:max_products]
+    
     async def search_category(self, category: str, max_products: int = 50) -> List[Product]:
         """Buscar produtos por categoria"""
-        category_id = self.config.CATEGORIES.get(category.lower())
+        category_id = self._find_category_id(category)
         
         if not category_id:
             print(f"❌ Categoria '{category}' não encontrada")

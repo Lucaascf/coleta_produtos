@@ -14,18 +14,20 @@ class ScraperConfig:
     SEARCH_BASE = "https://lista.mercadolivre.com.br"
     API_BASE = "https://api.mercadolibre.com"
     
-    # Categorias do ML com IDs corretos
+    # Categorias do ML com IDs corretos - usando nomes reais do ML
     CATEGORIES = {
-        "eletronicos": "MLB1000",
-        "celulares": "MLB1055", 
-        "informatica": "MLB1648",
-        "casa": "MLB1574",
-        "moda": "MLB1430",
-        "esportes": "MLB1276",
-        "livros": "MLB3025",
-        "beleza": "MLB263532",
-        "games": "MLB1144",
-        "automotivo": "MLB1743"
+        "Eletrônicos, Áudio e Vídeo": "MLB1000",
+        "Celulares e Telefones": "MLB1055", 
+        "Informática": "MLB1648",
+        "Casa, Móveis e Decoração": "MLB1574",
+        "Eletrodomésticos e Casa": "MLB1556",
+        "Roupas e Calçados": "MLB1430",
+        "Esportes e Fitness": "MLB1276",
+        "Livros, Revistas e Comics": "MLB3025",
+        "Saúde e Beleza": "MLB263532",
+        "Games": "MLB1144",
+        "Carros, Motos e Outros": "MLB1743",
+        "Relógios e Joias": "MLB1137"
     }
     
     # User agents realistas

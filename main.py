@@ -160,7 +160,8 @@ class ModernScraperCLI:
         # Tabela de produtos
         table = Table(box=box.ROUNDED, title=f"[bold]{title}[/bold]")
         table.add_column("#", style="bold yellow", width=3)
-        table.add_column("Nome", style="cyan", max_width=35)
+        table.add_column("Nome", style="cyan", max_width=30)
+        table.add_column("Categoria", style="magenta", justify="center", width=12)
         table.add_column("Preços", style="bold green", justify="right", width=18)
         table.add_column("Desconto", style="red", justify="center", width=10)
         table.add_column("Link", style="blue", justify="left", width=15)
@@ -168,7 +169,32 @@ class ModernScraperCLI:
         
         for i, product in enumerate(products, 1):  # Mostrar todos os produtos coletados
             # Nome (truncado para nova largura)
-            name = product.name[:32] + "..." if len(product.name) > 35 else product.name
+            name = product.name[:27] + "..." if len(product.name) > 30 else product.name
+            
+            # Categoria com emoji e confiança
+            if product.category:
+                category_emoji = {
+                    'eletronicos': '📱',
+                    'celulares': '📱', 
+                    'informatica': '💻',
+                    'casa': '🏠',
+                    'moda': '👔',
+                    'esportes': '⚽',
+                    'livros': '📚',
+                    'beleza': '💄',
+                    'games': '🎮',
+                    'automotivo': '🚗'
+                }.get(product.category, '❓')
+                
+                # Mostrar categoria com indicador de confiança
+                if product.category_confidence >= 0.8:
+                    category_display = f"{category_emoji} {product.category[:8]}"
+                elif product.category_confidence >= 0.5:
+                    category_display = f"{category_emoji} {product.category[:8]}?"
+                else:
+                    category_display = f"{category_emoji} {product.category[:8]}??"
+            else:
+                category_display = "❓ indefinido"
             
             # Preços - Mostrar de/por quando há desconto
             if product.original_price and product.original_price > product.price:
@@ -213,6 +239,7 @@ class ModernScraperCLI:
             table.add_row(
                 str(i),
                 name,
+                category_display,
                 price_display,
                 Text(discount_str, style=discount_style),
                 link_display,
@@ -251,6 +278,24 @@ class ModernScraperCLI:
                     stats_table.add_row("💵 Economia total:", f"R$ {total_saved:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
             
             stats_table.add_row("🚚 Frete grátis:", f"{free_shipping} ({free_shipping/len(products)*100:.1f}%)")
+            
+            # Estatísticas de categoria
+            categories = {}
+            for p in products:
+                if p.category:
+                    categories[p.category] = categories.get(p.category, 0) + 1
+            
+            if categories:
+                stats_table.add_row("", "")  # Linha separadora
+                stats_table.add_row("🏷️ Categorias encontradas:", "")
+                for category, count in sorted(categories.items(), key=lambda x: x[1], reverse=True):
+                    emoji = {
+                        'eletronicos': '📱', 'celulares': '📱', 'informatica': '💻',
+                        'casa': '🏠', 'moda': '👔', 'esportes': '⚽',
+                        'livros': '📚', 'beleza': '💄', 'games': '🎮', 'automotivo': '🚗'
+                    }.get(category, '❓')
+                    percentage = (count / len(products)) * 100
+                    stats_table.add_row(f"  {emoji} {category.capitalize()}:", f"{count} ({percentage:.1f}%)")
             
             stats_panel = Panel(
                 stats_table,
@@ -413,6 +458,8 @@ class ModernScraperCLI:
                     data = {
                         "numero": i,
                         "nome": product.name,
+                        "categoria": product.category,
+                        "categoria_confianca": product.category_confidence,
                         "preco": product.price,
                         "preco_original": product.original_price,
                         "desconto_percentual": product.discount_percentage,
@@ -425,11 +472,31 @@ class ModernScraperCLI:
                     }
                     products_data.append(data)
                 
+                # Calcular estatísticas de categoria para o JSON
+                categories_stats = {}
+                for product in products:
+                    if product.category:
+                        if product.category not in categories_stats:
+                            categories_stats[product.category] = {
+                                "total": 0,
+                                "confianca_media": 0.0,
+                                "confiancas": []
+                            }
+                        categories_stats[product.category]["total"] += 1
+                        categories_stats[product.category]["confiancas"].append(product.category_confidence)
+                
+                # Calcular confiança média para cada categoria
+                for category, stats in categories_stats.items():
+                    if stats["confiancas"]:
+                        stats["confianca_media"] = sum(stats["confiancas"]) / len(stats["confiancas"])
+                        del stats["confiancas"]  # Remover lista temporária
+                
                 final_data = {
                     "info": {
                         "total_produtos": len(products),
                         "coletado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                        "tipo_busca": search_type
+                        "tipo_busca": search_type,
+                        "categorias_encontradas": categories_stats
                     },
                     "produtos": products_data
                 }

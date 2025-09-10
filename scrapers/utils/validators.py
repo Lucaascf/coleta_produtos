@@ -22,6 +22,8 @@ class Product(BaseModel):
     is_promotion: bool = False
     free_shipping: bool = False
     product_id: Optional[str] = None
+    category: Optional[str] = None
+    category_confidence: float = 0.0
     scraped_at: datetime = Field(default_factory=datetime.now)
     
     @validator('name')
@@ -220,3 +222,262 @@ class DataProcessor:
         
         text_lower = text.lower()
         return any(keyword in text_lower for keyword in shipping_keywords)
+
+class ProductClassifier:
+    """Classificador automático de produtos por categoria"""
+    
+    # Mapeamento de palavras-chave para categorias (baseado em categorias reais do ML)
+    CATEGORY_KEYWORDS = {
+        'Eletrônicos, Áudio e Vídeo': {
+            'keywords': [
+                'tv', 'televisão', 'televisor', 'smart tv', 'led', 'lcd', 'oled', 'qled',
+                'eletrônico', 'eletronico', 'som', 'audio', 'áudio', 'fone', 'headset',
+                'speaker', 'caixa de som', 'amplificador', 'receiver', 'home theater',
+                'câmera', 'camera', 'fotografia', 'filmadora', 'drone', 'gopro',
+                'soundbar', 'subwoofer', 'toca-discos', 'vinil', 'cd player',
+                'microfone', 'mixer', 'estúdio', 'gravação'
+            ],
+            'weight': 1.0
+        },
+        'Celulares e Telefones': {
+            'keywords': [
+                'smartphone', 'celular', 'iphone', 'samsung galaxy', 'xiaomi', 'motorola',
+                'lg', 'huawei', 'oneplus', 'pixel', 'telefone', 'mobile', 'android', 'ios',
+                'capinha', 'película', 'carregador', 'cabo usb', 'power bank', 'bateria',
+                'fone bluetooth', 'airpods', 'earbuds', 'smartwatch', 'apple watch',
+                'celular desbloqueado', 'dual chip', '5g', '4g', 'smartphone android'
+            ],
+            'weight': 1.0
+        },
+        'Informática': {
+            'keywords': [
+                'notebook', 'laptop', 'computador', 'pc', 'desktop', 'all in one',
+                'processador', 'cpu', 'intel', 'amd', 'ryzen', 'core i3', 'core i5', 'core i7',
+                'placa de vídeo', 'gpu', 'nvidia', 'radeon', 'geforce', 'gtx', 'rtx',
+                'memória ram', 'ddr4', 'ddr5', 'ssd', 'hd', 'disco rígido', 'storage',
+                'placa mãe', 'motherboard', 'fonte', 'gabinete', 'cooler', 'monitor',
+                'teclado', 'mouse', 'mousepad', 'webcam', 'microfone', 'impressora',
+                'scanner', 'roteador', 'modem', 'wi-fi', 'cabo de rede', 'switch',
+                'pendrive', 'hd externo', 'backup', 'software', 'windows', 'office',
+                'ultrabook', 'chromebook', 'macbook'
+            ],
+            'weight': 1.0
+        },
+        'Casa, Móveis e Decoração': {
+            'keywords': [
+                'móvel', 'movel', 'sofá', 'sofa', 'poltrona', 'cadeira', 'mesa', 'cama',
+                'guarda-roupa', 'armário', 'armario', 'estante', 'rack', 'aparador',
+                'colchão', 'colchao', 'travesseiro', 'lençol', 'lencol', 'edredom',
+                'cortina', 'persiana', 'tapete', 'carpete', 'luminária', 'luminaria',
+                'abajur', 'lustre', 'pendente', 'espelho', 'quadro', 'decoração', 'decoracao',
+                'vaso', 'planta', 'jardim', 'cozinha', 'banheiro', 'quarto', 'sala',
+                'panela', 'frigideira', 'utensílio', 'utensilio', 'talheres', 'pratos',
+                'xícara', 'xicara', 'copo', 'garrafa', 'organizador', 'gaveta',
+                'criado-mudo', 'cômoda', 'penteadeira', 'painel tv'
+            ],
+            'weight': 1.0
+        },
+        'Eletrodomésticos e Casa': {
+            'keywords': [
+                'ar condicionado', 'ventilador', 'aquecedor', 'micro-ondas', 'microondas',
+                'geladeira', 'refrigerador', 'freezer', 'lava-louça', 'lavadora',
+                'fogão', 'cooktop', 'forno elétrico', 'aspirador', 'liquidificador',
+                'batedeira', 'processador', 'cafeteira', 'sanduicheira', 'grill',
+                'ferro de passar', 'secadora', 'lava e seca'
+            ],
+            'weight': 1.0
+        },
+        'Roupas e Calçados': {
+            'keywords': [
+                'roupa', 'vestuário', 'vestuario', 'camiseta', 'camisa', 'blusa', 'top',
+                'vestido', 'saia', 'short', 'bermuda', 'calça', 'calca', 'jeans',
+                'legging', 'moletom', 'casaco', 'jaqueta', 'blazer', 'colete',
+                'sapato', 'tênis', 'tenis', 'sandália', 'sandalia', 'chinelo', 'bota',
+                'sapatênis', 'sapatenis', 'scarpin', 'salto', 'rasteirinha',
+                'bolsa', 'mochila', 'carteira', 'necessaire', 'mala', 'pochete',
+                'masculino', 'feminino', 'infantil', 'bebê', 'bebe',
+                'polo', 'regata', 'cropped', 'midi', 'maxi'
+            ],
+            'weight': 1.0
+        },
+        'Esportes e Fitness': {
+            'keywords': [
+                'esporte', 'fitness', 'academia', 'ginástica', 'ginastica', 'musculação', 'musculacao',
+                'futebol', 'bola', 'chuteira', 'camisa de time', 'basquete', 'vôlei', 'volei',
+                'tênis esportivo', 'corrida', 'maratona', 'caminhada', 'running',
+                'bicicleta', 'bike', 'ciclismo', 'capacete', 'natação', 'natacao', 'piscina',
+                'halteres', 'peso', 'anilha', 'barra', 'esteira', 'elíptico', 'eliptico',
+                'yoga', 'pilates', 'colchonete', 'faixa elástica', 'suplemento', 'whey',
+                'creatina', 'bcaa', 'surf', 'prancha', 'skate', 'patins', 'patinete',
+                'crossfit', 'treino funcional', 'kettlebell'
+            ],
+            'weight': 1.0
+        },
+        'Livros, Revistas e Comics': {
+            'keywords': [
+                'livro', 'ebook', 'literatura', 'romance', 'ficção', 'ficcao', 'biografia',
+                'autoajuda', 'auto-ajuda', 'negócios', 'negocios', 'economia', 'política', 'politica',
+                'história', 'historia', 'geografia', 'ciência', 'ciencia', 'matemática', 'matematica',
+                'física', 'fisica', 'química', 'quimica', 'biologia', 'medicina',
+                'psicologia', 'filosofia', 'sociologia', 'educação', 'educacao',
+                'infantil', 'juvenil', 'didático', 'didatico', 'apostila', 'curso',
+                'revista', 'gibi', 'mangá', 'manga', 'hq', 'quadrinhos', 'comic'
+            ],
+            'weight': 1.0
+        },
+        'Saúde e Beleza': {
+            'keywords': [
+                'maquiagem', 'cosméticos', 'cosmeticos', 'batom', 'base', 'corretivo',
+                'rímel', 'rimel', 'sombra', 'blush', 'pó', 'po', 'primer', 'gloss',
+                'perfume', 'colônia', 'colonia', 'desodorante', 'antitranspirante',
+                'shampoo', 'condicionador', 'máscara capilar', 'mascara capilar',
+                'creme', 'hidratante', 'protetor solar', 'sabonete', 'esfoliante',
+                'sérum', 'serum', 'tônico', 'tonico', 'demaquilante', 'água micelar', 'agua micelar',
+                'escova', 'pente', 'secador', 'chapinha', 'babyliss', 'depilador',
+                'nail art', 'esmalte', 'acetona', 'lixa', 'alicate',
+                'vitamina', 'suplemento', 'medicamento'
+            ],
+            'weight': 1.0
+        },
+        'Games': {
+            'keywords': [
+                'video game', 'videogame', 'console', 'playstation', 'ps5', 'ps4', 'ps3',
+                'xbox', 'nintendo', 'switch', 'controle', 'joystick', 'gamepad',
+                'jogo', 'game', 'cd', 'dvd', 'blu-ray', 'digital', 'steam', 'epic',
+                'pc gamer', 'gaming', 'headset gamer', 'teclado gamer', 'mouse gamer',
+                'cadeira gamer', 'mesa gamer', 'monitor gamer', 'placa de captura',
+                'streamer', 'twitch', 'youtube', 'fps', 'rpg', 'mmorpg', 'battle royale',
+                'minecraft', 'fortnite', 'gta', 'fifa', 'pes', 'call of duty'
+            ],
+            'weight': 1.0
+        },
+        'Carros, Motos e Outros': {
+            'keywords': [
+                'carro', 'automóvel', 'automovel', 'veículo', 'veiculo', 'auto', 'motor',
+                'pneu', 'roda', 'aro', 'calota', 'freio', 'pastilha', 'disco', 'amortecedor',
+                'óleo', 'oleo', 'filtro', 'bateria', 'alternador', 'radiador', 'vela',
+                'correia', 'escapamento', 'para-choque', 'para-brisa', 'farol', 'lanterna',
+                'retrovisor', 'banco', 'volante', 'câmbio', 'cambio', 'embreagem',
+                'som automotivo', 'alarme', 'trava', 'película', 'cera', 'enceradeira',
+                'aspirador automotivo', 'suporte', 'carregador veicular', 'gps', 'dvr',
+                'moto', 'motocicleta', 'capacete moto'
+            ],
+            'weight': 1.0
+        },
+        'Relógios e Joias': {
+            'keywords': [
+                'relógio', 'relogio', 'smartwatch', 'apple watch', 'citizen', 'casio',
+                'óculos', 'oculos', 'colar', 'pulseira', 'anel', 'brinco',
+                'joia', 'jóia', 'ouro', 'prata', 'folheado', 'semi-joia'
+            ],
+            'weight': 1.0
+        }
+    }
+    
+    # Categorias reverso (para lookup por ID do ML)
+    ML_CATEGORY_IDS = {
+        'MLB1000': 'Eletrônicos, Áudio e Vídeo',
+        'MLB1055': 'Celulares e Telefones', 
+        'MLB1648': 'Informática',
+        'MLB1574': 'Casa, Móveis e Decoração',
+        'MLB1556': 'Eletrodomésticos e Casa',
+        'MLB1430': 'Roupas e Calçados',
+        'MLB1276': 'Esportes e Fitness',
+        'MLB3025': 'Livros, Revistas e Comics',
+        'MLB263532': 'Saúde e Beleza',
+        'MLB1144': 'Games',
+        'MLB1743': 'Carros, Motos e Outros',
+        'MLB1137': 'Relógios e Joias'
+    }
+    
+    @classmethod
+    def classify_by_url(cls, url: str) -> tuple[Optional[str], float]:
+        """Classificar produto baseado na URL do Mercado Livre"""
+        if not url:
+            return None, 0.0
+        
+        # Procurar por ID de categoria na URL
+        import re
+        
+        # Padrão: /c/MLB1000 ou similar
+        category_pattern = r'/c/(MLB\d+)'
+        match = re.search(category_pattern, url)
+        
+        if match:
+            category_id = match.group(1)
+            category = cls.ML_CATEGORY_IDS.get(category_id)
+            if category:
+                return category, 1.0  # Alta confiança quando vem da URL
+        
+        return None, 0.0
+    
+    @classmethod
+    def classify_by_keywords(cls, product_name: str, product_description: str = "") -> tuple[Optional[str], float]:
+        """Classificar produto baseado em palavras-chave no nome e descrição"""
+        if not product_name:
+            return None, 0.0
+        
+        # Combinar nome e descrição para análise
+        text_to_analyze = f"{product_name} {product_description}".lower()
+        
+        # Calcular score para cada categoria
+        category_scores = {}
+        
+        for category, data in cls.CATEGORY_KEYWORDS.items():
+            score = 0.0
+            keyword_matches = 0
+            
+            for keyword in data['keywords']:
+                if keyword.lower() in text_to_analyze:
+                    score += data['weight']
+                    keyword_matches += 1
+            
+            # Normalizar score pelo número de palavras-chave da categoria
+            if keyword_matches > 0:
+                category_scores[category] = (score, keyword_matches)
+        
+        # Encontrar categoria com maior score
+        if not category_scores:
+            return None, 0.0
+        
+        best_category = max(category_scores.items(), key=lambda x: (x[1][0], x[1][1]))
+        category_name = best_category[0]
+        score, matches = best_category[1]
+        
+        # Calcular confiança baseada no número de matches
+        # Mais matches = maior confiança
+        confidence = min(0.1 + (matches * 0.15), 0.95)  # Entre 0.1 e 0.95
+        
+        return category_name, confidence
+    
+    @classmethod
+    def classify_product(cls, name: str, url: str = "", description: str = "") -> tuple[Optional[str], float]:
+        """Classificar produto usando múltiplos métodos"""
+        
+        # Método 1: Por URL (maior confiança)
+        category_url, confidence_url = cls.classify_by_url(url)
+        if category_url and confidence_url > 0.8:
+            return category_url, confidence_url
+        
+        # Método 2: Por palavras-chave
+        category_keywords, confidence_keywords = cls.classify_by_keywords(name, description)
+        
+        # Escolher melhor resultado
+        if category_url and category_keywords:
+            # Se ambos concordam, usar maior confiança
+            if category_url == category_keywords:
+                return category_url, max(confidence_url, confidence_keywords)
+            else:
+                # Se discordam, usar o de maior confiança
+                if confidence_url > confidence_keywords:
+                    return category_url, confidence_url
+                else:
+                    return category_keywords, confidence_keywords
+        
+        # Retornar o que tiver
+        if category_url:
+            return category_url, confidence_url
+        elif category_keywords:
+            return category_keywords, confidence_keywords
+        
+        return None, 0.0
