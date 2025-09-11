@@ -4,6 +4,9 @@ Engine de Scraping com Playwright - Anti-detecção avançada
 
 import asyncio
 import random
+import os
+from pathlib import Path
+from datetime import datetime
 from typing import List, Optional, Dict, Any
 from playwright.async_api import async_playwright, Browser, BrowserContext, Page
 from bs4 import BeautifulSoup
@@ -15,15 +18,20 @@ from ..utils.validators import Product, DataProcessor, ProductClassifier
 class PlaywrightEngine:
     """Engine principal usando Playwright com recursos anti-detecção"""
     
-    def __init__(self):
+    def __init__(self, affiliate_mode: bool = False):
         self.playwright = None
         self.browser: Optional[Browser] = None
         self.context: Optional[BrowserContext] = None
         self.page: Optional[Page] = None
         self.config = ScraperConfig()
+        self.affiliate_mode = affiliate_mode
         
         # Cache de categorias para evitar requisições repetidas
         self.category_cache = {}
+        
+        # Estado do sistema de afiliados
+        self.affiliate_logged_in = False
+        self.affiliate_context_dir = None
         
     async def __aenter__(self):
         """Context manager entry"""
@@ -39,20 +47,40 @@ class PlaywrightEngine:
         try:
             self.playwright = await async_playwright().start()
             
-            # Configurações do browser - OTIMIZADO para performance
-            self.browser = await self.playwright.chromium.launch(
-                headless=True,   # Navegador invisível para performance
-                args=self.config.get_playwright_args()
-            )
+            # Configurações do browser
+            browser_args = self.config.get_playwright_args()
             
-            # Context com configurações realistas
-            self.context = await self.browser.new_context(
-                user_agent=self.config.get_random_user_agent(),
-                viewport={'width': random.randint(1200, 1920), 'height': random.randint(800, 1080)},
-                locale='pt-BR',
-                timezone_id='America/Sao_Paulo',
-                extra_http_headers=self.config.get_stealth_headers()
-            )
+            # Se modo afiliado, usar perfil persistente
+            if self.affiliate_mode:
+                self.affiliate_context_dir = Path(self.config.AFFILIATE_CONTEXT_DIR)
+                self.affiliate_context_dir.mkdir(exist_ok=True)
+                
+                self.browser = await self.playwright.chromium.launch_persistent_context(
+                    user_data_dir=str(self.affiliate_context_dir),
+                    headless=False,  # Mostrar browser para login manual se necessário
+                    args=browser_args,
+                    user_agent=self.config.get_random_user_agent(),
+                    viewport={'width': 1366, 'height': 768},
+                    locale='pt-BR',
+                    timezone_id='America/Sao_Paulo',
+                    extra_http_headers=self.config.get_stealth_headers()
+                )
+                self.context = self.browser
+                
+            else:
+                # Modo normal (scraping)
+                self.browser = await self.playwright.chromium.launch(
+                    headless=True,
+                    args=browser_args
+                )
+                
+                self.context = await self.browser.new_context(
+                    user_agent=self.config.get_random_user_agent(),
+                    viewport={'width': random.randint(1200, 1920), 'height': random.randint(800, 1080)},
+                    locale='pt-BR',
+                    timezone_id='America/Sao_Paulo',
+                    extra_http_headers=self.config.get_stealth_headers()
+                )
             
             # Página principal
             self.page = await self.context.new_page()
@@ -417,8 +445,8 @@ class PlaywrightEngine:
             matches = sum(1 for word in search_words if word in product_name)
             relevance_score = matches / len(search_words)
             
-            # Aceitar produtos com pelo menos 20% de relevância (mais flexível)
-            if relevance_score >= 0.2:
+            # Aceitar produtos com pelo menos 50% de relevância (mais restritivo)
+            if relevance_score >= 0.5:
                 relevant_products.append(product)
             # Ou se o nome contém o termo completo
             elif search_term.lower() in product_name:
@@ -644,3 +672,353 @@ class PlaywrightEngine:
                 await asyncio.sleep(1)
         
         return products[:max_products]
+    
+    # ===== MÉTODOS PARA SISTEMA DE AFILIADOS =====
+    
+    async def check_affiliate_login_status(self) -> bool:
+        """Verificar se já está logado no Mercado Livre"""
+        try:
+            # Como estamos usando perfil persistente, assumir que já está logado
+            # Simplesmente verificar se consegue acessar uma página que requer login
+            await self.navigate_to_page(self.config.BASE_URL)
+            await asyncio.sleep(2)
+            
+            # Se chegou até aqui sem redirecionamento para login, está logado
+            self.affiliate_logged_in = True
+            print("✅ Sessão ativa no Mercado Livre")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Erro ao verificar login: {e}")
+            return False
+    
+    async def login_mercado_livre(self, email: str = None, password: str = None) -> bool:
+        """Login no Mercado Livre"""
+        try:
+            # Verificar se já está logado
+            if await self.check_affiliate_login_status():
+                return True
+            
+            # Navegar para página de login
+            print("🔑 Navegando para página de login...")
+            await self.navigate_to_page(self.config.AFFILIATE_LOGIN_URL)
+            await asyncio.sleep(3)
+            
+            # Se não forneceu credenciais, aguardar login manual
+            if not email or not password:
+                print("👤 Faça login manualmente no navegador...")
+                print("⏳ Aguardando login... (pressione Enter após fazer login)")
+                input()
+                
+                # Verificar se login foi bem-sucedido
+                return await self.check_affiliate_login_status()
+            
+            # Login automático (se credenciais fornecidas)
+            selectors = self.config.AFFILIATE_SELECTORS
+            
+            # Inserir email
+            email_input = await self.page.wait_for_selector(selectors["login_email"], timeout=10000)
+            await email_input.fill(email)
+            await asyncio.sleep(1)
+            
+            # Inserir senha
+            password_input = await self.page.wait_for_selector(selectors["login_password"], timeout=10000)
+            await password_input.fill(password)
+            await asyncio.sleep(1)
+            
+            # Clicar no botão de login
+            login_button = await self.page.wait_for_selector(selectors["login_button"], timeout=10000)
+            await login_button.click()
+            
+            # Aguardar redirecionamento
+            await asyncio.sleep(5)
+            
+            # Verificar se login foi bem-sucedido
+            return await self.check_affiliate_login_status()
+            
+        except Exception as e:
+            print(f"❌ Erro durante login: {e}")
+            return False
+    
+    async def navigate_to_affiliate_generator(self) -> bool:
+        """Navegar para o gerador de links de afiliado"""
+        try:
+            print("🔗 Navegando para linkbuilder...")
+            success = await self.navigate_to_page(self.config.AFFILIATE_GENERATOR_URL)
+            
+            if success:
+                # Aguardar carregamento da página com JavaScript
+                print("⏳ Aguardando carregamento completo...")
+                await asyncio.sleep(8)
+                print("✅ Página do linkbuilder carregada")
+                return True
+            else:
+                print("❌ Não foi possível acessar o linkbuilder")
+                return False
+            
+        except Exception as e:
+            print(f"❌ Erro ao navegar para linkbuilder: {e}")
+            return False
+    
+    async def generate_affiliate_links_batch_single_request(self, product_urls: List[str], retry_count: int = 0) -> List[str]:
+        """Gerar links de afiliado para múltiplas URLs em uma única requisição"""
+        max_retries = 2
+        try:
+            if not product_urls:
+                return []
+            
+            print(f"🔍 Processando {len(product_urls)} URLs em lote...")
+            
+            # Aguardar ferramenta carregar completamente
+            await asyncio.sleep(3)
+            
+            # Encontrar o campo de input (textarea)
+            print("🎯 Procurando textarea para URLs...")
+            url_input = None
+            try:
+                textareas = await self.page.query_selector_all("textarea")
+                if textareas:
+                    # Usar a primeira textarea (campo de input)
+                    url_input = textareas[0]
+                    placeholder = await url_input.get_attribute("placeholder") or ""
+                    print(f"✅ Textarea encontrada com placeholder: '{placeholder}'")
+                else:
+                    print("❌ Nenhuma textarea encontrada")
+                    return []
+            except Exception as e:
+                print(f"❌ Erro ao procurar textarea: {e}")
+                return []
+            
+            # Preparar todas as URLs ORIGINAIS em uma string (uma por linha)
+            urls_text = "\n".join(product_urls)
+            print(f"📝 Inserindo {len(product_urls)} URLs no campo...")
+            print(f"📋 Primeiro link: {product_urls[0][:70]}...")
+            if len(product_urls) > 1:
+                print(f"📋 Último link: {product_urls[-1][:70]}...")
+            
+            # Log adicional para debug
+            if len(product_urls) <= 5:
+                print("🔍 URLs sendo enviadas:")
+                for i, url in enumerate(product_urls, 1):
+                    print(f"   {i}. {url[:80]}...")
+            
+            # Limpar e inserir todas as URLs
+            await url_input.click()
+            await url_input.fill("")
+            await asyncio.sleep(0.5)
+            await url_input.fill(urls_text)
+            await asyncio.sleep(2)
+            
+            # Procurar e clicar no botão "Gerar"
+            print("🎯 Procurando botão Gerar...")
+            generate_button = None
+            generate_button_selectors = [
+                "button:has-text('Gerar')",
+                "input[type='submit'][value='Gerar']",
+                ".btn:has-text('Gerar')",
+                "button[type='submit']"
+            ]
+            
+            for selector in generate_button_selectors:
+                try:
+                    button = await self.page.wait_for_selector(selector, timeout=3000)
+                    if button:
+                        button_text = await button.inner_text()
+                        print(f"✅ Botão encontrado: '{button_text}'")
+                        generate_button = button
+                        break
+                except:
+                    continue
+            
+            if not generate_button:
+                print("❌ Botão de gerar não encontrado")
+                return []
+            
+            # Clicar no botão e aguardar processamento
+            print("⚡ Clicando no botão de gerar...")
+            await generate_button.click()
+            
+            # Aguardar processamento (tempo adequado para lotes)
+            processing_time = max(15, len(product_urls) * 3)  # Mínimo 15s, mais generoso
+            print(f"⏳ Aguardando processamento ({processing_time}s para {len(product_urls)} produtos)...")
+            await asyncio.sleep(processing_time)
+            
+            # Procurar botão "Copiar" e clicar
+            print("🎯 Procurando botão Copiar...")
+            copy_button_selectors = [
+                "button:has-text('Copiar')",
+                ".copy-btn",
+                "button[title*='Copiar']",
+                "[data-testid='copy-button']"
+            ]
+            
+            copy_button = None
+            for selector in copy_button_selectors:
+                try:
+                    button = await self.page.wait_for_selector(selector, timeout=5000)
+                    if button:
+                        button_text = await button.inner_text()
+                        print(f"✅ Botão Copiar encontrado: '{button_text}'")
+                        copy_button = button
+                        break
+                except:
+                    continue
+            
+            if copy_button:
+                print("📋 Clicando no botão Copiar...")
+                await copy_button.click()
+                await asyncio.sleep(1)
+            else:
+                print("⚠️ Botão Copiar não encontrado, continuando sem clicar...")
+            
+            # Obter os links gerados da segunda textarea
+            print("🔍 Extraindo links gerados...")
+            try:
+                textareas = await self.page.query_selector_all("textarea")
+                if len(textareas) >= 2:
+                    # Segunda textarea contém os links gerados
+                    result_textarea = textareas[1]
+                    generated_content = await result_textarea.input_value()
+                    
+                    if generated_content:
+                        # Dividir por linhas e filtrar links válidos
+                        lines = generated_content.strip().split('\n')
+                        affiliate_links = []
+                        
+                        for line in lines:
+                            line = line.strip()
+                            if line and line.startswith("http"):
+                                affiliate_links.append(line)
+                        
+                        print(f"✅ {len(affiliate_links)} links de afiliado extraídos!")
+                        print(f"📊 URLs enviadas: {len(product_urls)} | Links recebidos: {len(affiliate_links)}")
+                        print(f"📋 Primeiro link gerado: {affiliate_links[0] if affiliate_links else 'N/A'}")
+                        print(f"📋 Último link gerado: {affiliate_links[-1] if len(affiliate_links) > 1 else 'N/A'}")
+                        
+                        # Verificar se temos todos os links esperados
+                        if len(affiliate_links) < len(product_urls):
+                            print(f"⚠️ ATENÇÃO: Esperados {len(product_urls)} links, recebidos {len(affiliate_links)}")
+                            
+                            # Retry automático se não temos todos os links
+                            if retry_count < max_retries:
+                                print(f"🔄 Tentativa {retry_count + 1}/{max_retries + 1} - Reprocessando...")
+                                await asyncio.sleep(5)  # Pausa antes do retry
+                                return await self.generate_affiliate_links_batch_single_request(product_urls, retry_count + 1)
+                        
+                        return affiliate_links
+                    else:
+                        print("❌ Segunda textarea está vazia")
+                        return []
+                else:
+                    print(f"❌ Esperavam-se 2 textareas, encontradas: {len(textareas)}")
+                    return []
+                    
+            except Exception as e:
+                print(f"❌ Erro ao extrair links: {e}")
+                return []
+            
+        except Exception as e:
+            print(f"❌ Erro durante processamento em lote: {e}")
+            return []
+    
+    async def generate_affiliate_links_batch(self, products: List[Product], progress_callback=None) -> Dict[str, Any]:
+        """Gerar links de afiliado em lote usando uma única requisição"""
+        results = {
+            'success_count': 0,
+            'error_count': 0,
+            'links': {},
+            'product_mapping': [],
+            'processed_at': datetime.now().isoformat()
+        }
+        
+        total_products = len(products)
+        
+        if not await self.navigate_to_affiliate_generator():
+            print("❌ Não foi possível acessar o gerador de links")
+            return results
+        
+        # Filtrar produtos com URLs válidas
+        valid_products = [p for p in products if p.url and p.url.strip()]
+        if not valid_products:
+            print("❌ Nenhum produto com URL válida encontrado")
+            return results
+        
+        print(f"📋 Processando {len(valid_products)} produtos com URLs válidas...")
+        
+        if progress_callback:
+            progress_callback(0, total_products, "Preparando URLs para processamento...")
+        
+        # Extrair todas as URLs
+        product_urls = [product.url for product in valid_products]
+        
+        if progress_callback:
+            progress_callback(25, total_products, "Enviando URLs para o gerador...")
+        
+        # Processar tudo em uma única requisição
+        affiliate_links = await self.generate_affiliate_links_batch_single_request(product_urls)
+        
+        if progress_callback:
+            progress_callback(75, total_products, "Organizando resultados...")
+        
+        # Mapear produtos com links gerados
+        success_count = 0
+        for i, product in enumerate(valid_products):
+            if i < len(affiliate_links):
+                # Link encontrado na mesma posição
+                affiliate_link = affiliate_links[i]
+                results['links'][product.url] = affiliate_link
+                
+                # Adicionar ao mapeamento estruturado
+                results['product_mapping'].append({
+                    'ordem': i + 1,
+                    'nome': product.name,
+                    'categoria': product.category,
+                    'preco': product.price,
+                    'preco_original': product.original_price,
+                    'url_original': product.url,
+                    'url_afiliado': affiliate_link,
+                    'produto_id': product.product_id,
+                    'frete_gratis': product.free_shipping,
+                    'em_promocao': product.is_promotion
+                })
+                
+                success_count += 1
+                print(f"✅ {i+1}/{len(valid_products)}: {product.name[:50]}...")
+            else:
+                # Produto sem link correspondente
+                print(f"❌ {i+1}/{len(valid_products)}: Sem link para {product.name[:50]}...")
+                print(f"   URL original: {product.url[:80]}...")
+                
+                # Adicionar ao mapeamento mesmo sem link para rastreamento
+                results['product_mapping'].append({
+                    'ordem': i + 1,
+                    'nome': product.name,
+                    'categoria': product.category,
+                    'preco': product.price,
+                    'preco_original': product.original_price,
+                    'url_original': product.url,
+                    'url_afiliado': None,  # Marcado como falha
+                    'produto_id': product.product_id,
+                    'frete_gratis': product.free_shipping,
+                    'em_promocao': product.is_promotion
+                })
+        
+        results['success_count'] = success_count
+        results['error_count'] = len(valid_products) - success_count
+        
+        if progress_callback:
+            progress_callback(total_products, total_products, f"Concluído! {success_count} links gerados")
+        
+        print(f"🎉 Processamento concluído: {success_count}/{len(valid_products)} links gerados")
+        
+        # Mostrar resumo de falhas se houver
+        failed_count = len(valid_products) - success_count
+        if failed_count > 0:
+            print(f"⚠️ {failed_count} produtos falharam:")
+            failed_products = [p for p in results['product_mapping'] if not p.get('url_afiliado')]
+            for failed in failed_products[:3]:  # Mostrar apenas os primeiros 3
+                print(f"   • {failed['nome'][:40]}...")
+            if failed_count > 3:
+                print(f"   • ... e mais {failed_count - 3} produtos")
+        
+        return results

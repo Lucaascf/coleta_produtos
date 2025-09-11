@@ -30,6 +30,7 @@ from scrapers.engines.playwright_engine import PlaywrightEngine
 from scrapers.utils.cache import ScraperCache
 from scrapers.utils.validators import Product
 from scrapers.config import ScraperConfig
+from scrapers.affiliate_manager import AffiliateManager
 
 console = Console()
 
@@ -69,9 +70,10 @@ class ModernScraperCLI:
             ("1", "🔍 Buscar produtos por termo", "✅ Disponível"),
             ("2", "🏷️ Buscar por categoria/nicho", "✅ Disponível"), 
             ("3", "🔥 Coletar ofertas e promoções", "✅ Disponível"),
-            ("4", "📊 Ver estatísticas do cache", "✅ Disponível"),
-            ("5", "🧹 Limpar cache antigo", "✅ Disponível"),
-            ("6", "⚙️ Configurações do sistema", "✅ Disponível"),
+            ("4", "🔗 Gerar links de afiliado", "✅ Novo!"),
+            ("5", "📊 Ver estatísticas do cache", "✅ Disponível"),
+            ("6", "🧹 Limpar cache antigo", "✅ Disponível"),
+            ("7", "⚙️ Configurações do sistema", "✅ Disponível"),
             ("0", "❌ Sair", "")
         ]
         
@@ -89,7 +91,7 @@ class ModernScraperCLI:
         
         return Prompt.ask(
             "\n[bold cyan]➡️ Escolha uma opção[/bold cyan]",
-            choices=["0", "1", "2", "3", "4", "5", "6"],
+            choices=["0", "1", "2", "3", "4", "5", "6", "7"],
             default="1"
         )
     
@@ -434,76 +436,72 @@ class ModernScraperCLI:
         console.print(f"\n[green]✅ URLs exportadas para: {filename}[/green]")
     
     async def save_products(self, products: List[Product], search_type: str):
-        """Salvar produtos em arquivo"""
+        """Salvar produtos em arquivo automaticamente"""
         if not products:
             return
         
-        save_file = Confirm.ask(
-            "\n[blue]Salvar resultados em arquivo?[/blue]",
-            default=True
-        )
+        # Salvar automaticamente sem perguntar
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"data/produtos_{search_type}_{timestamp}.json"
         
-        if save_file:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"data/produtos_{search_type}_{timestamp}.json"
-            
-            # Criar diretório se não existir
-            os.makedirs("data", exist_ok=True)
-            
-            # Salvar como JSON com formato melhorado
-            import json
-            with open(filename, 'w', encoding='utf-8') as f:
-                products_data = []
-                for i, product in enumerate(products, 1):
-                    data = {
-                        "numero": i,
-                        "nome": product.name,
-                        "categoria": product.category,
-                        "categoria_confianca": product.category_confidence,
-                        "preco": product.price,
-                        "preco_original": product.original_price,
-                        "desconto_percentual": product.discount_percentage,
-                        "url_completa": product.url,
-                        "produto_id": product.product_id,
-                        "imagem_url": product.image_url,
-                        "frete_gratis": product.free_shipping,
-                        "em_promocao": product.is_promotion,
-                        "coletado_em": product.scraped_at.isoformat() if hasattr(product, 'scraped_at') else datetime.now().isoformat()
-                    }
-                    products_data.append(data)
-                
-                # Calcular estatísticas de categoria para o JSON
-                categories_stats = {}
-                for product in products:
-                    if product.category:
-                        if product.category not in categories_stats:
-                            categories_stats[product.category] = {
-                                "total": 0,
-                                "confianca_media": 0.0,
-                                "confiancas": []
-                            }
-                        categories_stats[product.category]["total"] += 1
-                        categories_stats[product.category]["confiancas"].append(product.category_confidence)
-                
-                # Calcular confiança média para cada categoria
-                for category, stats in categories_stats.items():
-                    if stats["confiancas"]:
-                        stats["confianca_media"] = sum(stats["confiancas"]) / len(stats["confiancas"])
-                        del stats["confiancas"]  # Remover lista temporária
-                
-                final_data = {
-                    "info": {
-                        "total_produtos": len(products),
-                        "coletado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                        "tipo_busca": search_type,
-                        "categorias_encontradas": categories_stats
-                    },
-                    "produtos": products_data
+        # Criar diretório se não existir
+        os.makedirs("data", exist_ok=True)
+        
+        # Salvar como JSON com formato melhorado
+        import json
+        with open(filename, 'w', encoding='utf-8') as f:
+            products_data = []
+            for i, product in enumerate(products, 1):
+                data = {
+                    "numero": i,
+                    "nome": product.name,
+                    "categoria": product.category,
+                    "categoria_confianca": product.category_confidence,
+                    "preco": product.price,
+                    "preco_original": product.original_price,
+                    "desconto_percentual": product.discount_percentage,
+                    "url_completa": product.url,
+                    "produto_id": product.product_id,
+                    "imagem_url": product.image_url,
+                    "frete_gratis": product.free_shipping,
+                    "em_promocao": product.is_promotion,
+                    "coletado_em": product.scraped_at.isoformat() if hasattr(product, 'scraped_at') else datetime.now().isoformat()
                 }
-                
-                json.dump(final_data, f, ensure_ascii=False, indent=2)
+                products_data.append(data)
             
-            console.print(f"[green]✅ Produtos salvos em: {filename}[/green]")
+            # Calcular estatísticas de categoria para o JSON
+            categories_stats = {}
+            for product in products:
+                if product.category:
+                    if product.category not in categories_stats:
+                        categories_stats[product.category] = {
+                            "total": 0,
+                            "confianca_media": 0.0,
+                            "confiancas": []
+                        }
+                    categories_stats[product.category]["total"] += 1
+                    categories_stats[product.category]["confiancas"].append(product.category_confidence)
+            
+            # Calcular confiança média para cada categoria
+            for category, stats in categories_stats.items():
+                if stats["confiancas"]:
+                    stats["confianca_media"] = sum(stats["confiancas"]) / len(stats["confiancas"])
+                    del stats["confiancas"]  # Remover lista temporária
+            
+            final_data = {
+                "info": {
+                    "total_produtos": len(products),
+                    "coletado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    "tipo_busca": search_type,
+                    "categorias_encontradas": categories_stats
+                },
+                "produtos": products_data
+            }
+            
+            json.dump(final_data, f, ensure_ascii=False, indent=2)
+        
+        console.print(f"[green]✅ Produtos salvos automaticamente em: {filename}[/green]")
+        console.print(f"[yellow]🔗 Use a opção '4' do menu para gerar links de afiliado[/yellow]")
     
     async def search_by_term(self):
         """Buscar produtos por termo"""
@@ -534,7 +532,10 @@ class ModernScraperCLI:
             task = progress.add_task(f"🔍 Buscando '{search_term}'...", total=None)
             
             async with PlaywrightEngine() as engine:
-                products = await engine.search_products(search_term, max_products)
+                def update_progress(current, total, description):
+                    progress.update(task, description=description)
+                
+                products = await engine.search_products_with_progress(search_term, max_products, update_progress)
             
             progress.update(task, completed=True)
         
@@ -714,6 +715,109 @@ class ModernScraperCLI:
         
         console.print(settings_table)
     
+    async def generate_affiliate_links_menu(self):
+        """Menu para gerar links de afiliado"""
+        try:
+            console.print("\n[bold blue]🔗 GERADOR DE LINKS DE AFILIADO[/bold blue]")
+            console.print("Esta funcionalidade converte links de produtos em links de afiliado do Mercado Pago")
+            console.print()
+            
+            # Listar arquivos de produtos disponíveis
+            async with AffiliateManager() as affiliate_manager:
+                product_files = affiliate_manager.list_available_product_files()
+                
+                if not product_files:
+                    console.print("[red]❌ Nenhum arquivo de produtos encontrado na pasta 'data'[/red]")
+                    console.print("[yellow]💡 Execute primeiro uma coleta de produtos (opções 1, 2 ou 3)[/yellow]")
+                    return
+                
+                # Mostrar arquivos disponíveis
+                files_table = Table(box=box.ROUNDED, title="[bold]Arquivos de Produtos Disponíveis[/bold]")
+                files_table.add_column("#", style="bold yellow", width=3)
+                files_table.add_column("Arquivo", style="cyan")
+                files_table.add_column("Data", style="green")
+                
+                for i, filepath in enumerate(product_files[:10], 1):  # Mostrar até 10 arquivos
+                    filename = os.path.basename(filepath)
+                    file_date = datetime.fromtimestamp(os.path.getmtime(filepath)).strftime("%d/%m/%Y %H:%M")
+                    files_table.add_row(str(i), filename, file_date)
+                
+                console.print(files_table)
+                
+                # Escolher arquivo
+                if len(product_files) == 1:
+                    choice = "1"
+                    console.print(f"\n[green]📁 Usando arquivo único disponível[/green]")
+                else:
+                    choice = Prompt.ask(
+                        f"\n[cyan]Digite o número do arquivo (1-{min(len(product_files), 10)})[/cyan]",
+                        default="1"
+                    )
+                
+                try:
+                    file_index = int(choice) - 1
+                    if 0 <= file_index < len(product_files):
+                        selected_file = product_files[file_index]
+                    else:
+                        console.print("[red]❌ Número de arquivo inválido[/red]")
+                        return
+                except ValueError:
+                    console.print("[red]❌ Por favor, digite um número válido[/red]")
+                    return
+                
+                # Confirmar processamento
+                filename = os.path.basename(selected_file)
+                confirm = Confirm.ask(
+                    f"\n[yellow]Processar arquivo '{filename}' para gerar links de afiliado?[/yellow]",
+                    default=True
+                )
+                
+                if not confirm:
+                    console.print("[yellow]Operação cancelada[/yellow]")
+                    return
+                
+                # Informações importantes
+                console.print()
+                console.print("[bold red]⚠️ ATENÇÃO:[/bold red]")
+                console.print("• O navegador será aberto para fazer login no Mercado Livre")
+                console.print("• Você precisa ter uma conta de vendedor/afiliado ativa")
+                console.print("• O processo pode demorar alguns minutos")
+                console.print()
+                
+                proceed = Confirm.ask("[cyan]Continuar?[/cyan]", default=True)
+                if not proceed:
+                    console.print("[yellow]Operação cancelada[/yellow]")
+                    return
+                
+                # Processar arquivo
+                with Progress(
+                    SpinnerColumn(),
+                    TextColumn("[progress.description]{task.description}"),
+                    console=console
+                ) as progress:
+                    
+                    task = progress.add_task("🔗 Processando links de afiliado...", total=None)
+                    
+                    results = await affiliate_manager.process_product_file(selected_file)
+                    
+                    progress.update(task, completed=True)
+                
+                # Verificar resultados
+                if "error" in results:
+                    console.print(f"[red]❌ Erro: {results['error']}[/red]")
+                else:
+                    console.print("\n[green]🎉 Processamento concluído com sucesso![/green]")
+                    console.print(f"✅ {results.get('success_count', 0)} links gerados")
+                    console.print(f"❌ {results.get('error_count', 0)} falhas")
+                    
+                    if results.get('success_count', 0) > 0:
+                        console.print("\n[blue]💡 Os links de afiliado foram salvos na pasta 'data'[/blue]")
+                
+        except KeyboardInterrupt:
+            console.print("\n[yellow]⚠️ Operação cancelada pelo usuário[/yellow]")
+        except Exception as e:
+            console.print(f"\n[red]❌ Erro inesperado: {e}[/red]")
+    
     async def run(self):
         """Executar interface principal"""
         try:
@@ -733,10 +837,12 @@ class ModernScraperCLI:
                     elif choice == "3":
                         await self.search_offers()
                     elif choice == "4":
-                        await self.show_cache_stats()
+                        await self.generate_affiliate_links_menu()
                     elif choice == "5":
-                        await self.cleanup_cache()
+                        await self.show_cache_stats()
                     elif choice == "6":
+                        await self.cleanup_cache()
+                    elif choice == "7":
                         self.show_settings()
                     
                     if choice != "0":

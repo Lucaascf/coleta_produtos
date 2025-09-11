@@ -14,6 +14,11 @@ class ScraperConfig:
     SEARCH_BASE = "https://lista.mercadolivre.com.br"
     API_BASE = "https://api.mercadolibre.com"
     
+    # URLs para sistema de afiliados
+    AFFILIATE_LOGIN_URL = "https://www.mercadolivre.com.br/hub/login"
+    AFFILIATE_GENERATOR_URL = "https://www.mercadolivre.com.br/afiliados/linkbuilder#menu-lateral"
+    AFFILIATE_DASHBOARD_URL = "https://www.mercadolivre.com.br/vendas"
+    
     # Categorias do ML com IDs corretos - usando nomes reais do ML
     CATEGORIES = {
         "Eletrônicos, Áudio e Vídeo": "MLB1000",
@@ -53,6 +58,22 @@ class ScraperConfig:
     # Configurações de cache
     CACHE_TTL = 3600  # 1 hora
     MAX_CACHE_SIZE = 1000
+    
+    # Configurações específicas para afiliados
+    AFFILIATE_CONTEXT_DIR = "affiliate_profile"  # Diretório para salvar contexto do browser
+    AFFILIATE_BATCH_SIZE = 10  # Processar links em lotes
+    AFFILIATE_DELAY_BETWEEN_LINKS = 2.0  # Delay entre processamento de links
+    
+    # Seletores CSS para automação do gerador de links
+    AFFILIATE_SELECTORS = {
+        "login_email": "input[name='email'], input[type='email'], #email",
+        "login_password": "input[name='password'], input[type='password'], #password",
+        "login_button": "button[type='submit'], .andes-button--primary, .btn-primary",
+        "link_input": "input[placeholder*='link'], input[placeholder*='URL'], input[type='url'], .link-input, #url-input",
+        "generate_button": "button:has-text('Gerar'), button:has-text('Criar'), button[type='submit'], .generate-btn, .btn-generate",
+        "generated_link": ".generated-link, .affiliate-link, [data-testid='generated-link'], .result-link, .output-link",
+        "copy_button": ".copy-btn, button[title*='Copiar'], [data-testid='copy-button']"
+    }
     
     @staticmethod
     def get_random_user_agent() -> str:

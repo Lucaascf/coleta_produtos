@@ -18,6 +18,7 @@ from typing import List, Optional
 from scrapers.engines.playwright_engine import PlaywrightEngine
 from scrapers.utils.validators import Product
 from scrapers.config import ScraperConfig
+from scrapers.affiliate_manager import AffiliateManager
 
 class MercadoLivreScraper:
     """Interface gráfica principal para o scraper"""
@@ -204,6 +205,12 @@ class MercadoLivreScraper:
             actions_frame, 
             text="📄 Exportar JSON",
             command=self.export_json
+        ).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(
+            actions_frame, 
+            text="🔗 Gerar Links Afiliado",
+            command=self.generate_affiliate_links
         ).pack(side=tk.LEFT, padx=5)
         
         ttk.Button(
@@ -546,7 +553,11 @@ class MercadoLivreScraper:
             if products:
                 self.products.extend(products)
                 self.root.after(0, self.add_products_to_tree, products)
-                self.root.after(0, self.update_status, f"✅ Concluído! {len(products)} produtos encontrados")
+                
+                # Salvar automaticamente
+                self.root.after(0, self._auto_save_products, products, search_type)
+                
+                self.root.after(0, self.update_status, f"✅ Concluído! {len(products)} produtos encontrados e salvos")
             else:
                 self.root.after(0, self.update_status, "❌ Nenhum produto encontrado")
                 self.root.after(0, messagebox.showinfo, "Resultado", "Nenhum produto encontrado")
@@ -677,6 +688,79 @@ class MercadoLivreScraper:
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao exportar:\n{str(e)}")
     
+    def _auto_save_products(self, products, search_type):
+        """Salvar produtos automaticamente após busca"""
+        if not products:
+            return
+            
+        try:
+            from datetime import datetime
+            import os
+            
+            # Criar diretório se não existir
+            os.makedirs("data", exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"data/produtos_{search_type}_{timestamp}.json"
+            
+            # Preparar dados para salvar
+            products_data = []
+            for i, product in enumerate(products, 1):
+                data = {
+                    "numero": i,
+                    "nome": product.name,
+                    "categoria": product.category,
+                    "categoria_confianca": product.category_confidence,
+                    "preco": product.price,
+                    "preco_original": product.original_price,
+                    "desconto_percentual": product.discount_percentage,
+                    "url_completa": product.url,
+                    "produto_id": product.product_id,
+                    "imagem_url": product.image_url,
+                    "frete_gratis": product.free_shipping,
+                    "em_promocao": product.is_promotion,
+                    "coletado_em": product.scraped_at.isoformat() if hasattr(product, 'scraped_at') else datetime.now().isoformat()
+                }
+                products_data.append(data)
+            
+            # Calcular estatísticas de categoria
+            categories_stats = {}
+            for product in products:
+                if product.category:
+                    if product.category not in categories_stats:
+                        categories_stats[product.category] = {
+                            "total": 0,
+                            "confianca_media": 0.0,
+                            "confiancas": []
+                        }
+                    categories_stats[product.category]["total"] += 1
+                    categories_stats[product.category]["confiancas"].append(product.category_confidence)
+            
+            # Calcular confiança média
+            for category, stats in categories_stats.items():
+                if stats["confiancas"]:
+                    stats["confianca_media"] = sum(stats["confiancas"]) / len(stats["confiancas"])
+                    del stats["confiancas"]
+            
+            final_data = {
+                "info": {
+                    "total_produtos": len(products),
+                    "coletado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    "tipo_busca": search_type,
+                    "categorias_encontradas": categories_stats
+                },
+                "produtos": products_data
+            }
+            
+            # Salvar arquivo
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(final_data, f, ensure_ascii=False, indent=2)
+                
+            messagebox.showinfo("Auto-salvo", f"Produtos salvos automaticamente:\n{filename}\n\n🔗 Use 'Gerar Links Afiliado' para criar os links!")
+            
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao salvar automaticamente:\n{str(e)}")
+    
     def export_json(self):
         """Exportar para JSON"""
         if not self.products:
@@ -721,6 +805,280 @@ class MercadoLivreScraper:
                 
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao exportar:\n{str(e)}")
+    
+    def generate_affiliate_links(self):
+        """Gerar links de afiliado a partir de arquivos de produtos"""
+        # Verificar se há arquivos de produtos disponíveis
+        data_dir = "data"
+        if not os.path.exists(data_dir):
+            messagebox.showwarning("Aviso", "Pasta 'data' não encontrada.\nExecute primeiro uma coleta de produtos.")
+            return
+        
+        # Buscar arquivos JSON de produtos
+        product_files = []
+        for file in os.listdir(data_dir):
+            if file.startswith("produtos_") and file.endswith(".json"):
+                product_files.append(os.path.join(data_dir, file))
+        
+        if not product_files:
+            messagebox.showwarning("Aviso", "Nenhum arquivo de produtos encontrado na pasta 'data'.\nExecute primeiro uma coleta de produtos (opções de busca).")
+            return
+        
+        # Ordenar por data de modificação (mais recente primeiro)
+        product_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+        
+        # Mostrar janela de seleção
+        self._show_affiliate_window(product_files)
+    
+    def _show_affiliate_window(self, product_files):
+        """Mostrar janela para seleção de arquivo e processamento"""
+        # Criar janela modal
+        affiliate_window = tk.Toplevel(self.root)
+        affiliate_window.title("🔗 Gerador de Links de Afiliado")
+        affiliate_window.geometry("700x500")
+        affiliate_window.transient(self.root)
+        affiliate_window.grab_set()
+        
+        # Centralizar janela
+        affiliate_window.update_idletasks()
+        x = (affiliate_window.winfo_screenwidth() // 2) - (700 // 2)
+        y = (affiliate_window.winfo_screenheight() // 2) - (500 // 2)
+        affiliate_window.geometry(f"700x500+{x}+{y}")
+        
+        # Frame principal
+        main_frame = ttk.Frame(affiliate_window, padding="10")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título e descrição
+        title_label = ttk.Label(
+            main_frame,
+            text="🔗 Gerador de Links de Afiliado",
+            font=("Arial", 14, "bold")
+        )
+        title_label.pack(pady=(0, 10))
+        
+        desc_label = ttk.Label(
+            main_frame,
+            text="Esta ferramenta converte links de produtos em links de afiliado do Mercado Pago",
+            font=("Arial", 10)
+        )
+        desc_label.pack(pady=(0, 20))
+        
+        # Frame para lista de arquivos
+        files_frame = ttk.LabelFrame(main_frame, text="Arquivos de Produtos Disponíveis", padding="10")
+        files_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        
+        # Treeview para arquivos
+        columns = ("arquivo", "data", "produtos")
+        files_tree = ttk.Treeview(files_frame, columns=columns, show="headings", height=8)
+        
+        # Definir cabeçalhos
+        files_tree.heading("arquivo", text="Nome do Arquivo")
+        files_tree.heading("data", text="Data de Criação")
+        files_tree.heading("produtos", text="Produtos")
+        
+        # Definir larguras
+        files_tree.column("arquivo", width=300)
+        files_tree.column("data", width=150)
+        files_tree.column("produtos", width=100)
+        
+        # Scrollbar para a lista
+        files_scrollbar = ttk.Scrollbar(files_frame, orient="vertical", command=files_tree.yview)
+        files_tree.configure(yscrollcommand=files_scrollbar.set)
+        
+        # Grid
+        files_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        files_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Preencher lista de arquivos
+        for file_path in product_files[:10]:  # Mostrar até 10 arquivos
+            filename = os.path.basename(file_path)
+            file_date = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%d/%m/%Y %H:%M")
+            
+            # Tentar contar produtos no arquivo
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    product_count = len(data.get('produtos', []))
+            except:
+                product_count = "?"
+            
+            files_tree.insert("", "end", values=(filename, file_date, product_count))
+        
+        # Frame de informações importantes
+        info_frame = ttk.LabelFrame(main_frame, text="⚠️ Informações Importantes", padding="10")
+        info_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        info_text = """• O navegador será aberto para fazer login no Mercado Livre
+• Você precisa ter uma conta de vendedor/afiliado ativa
+• O processo pode demorar alguns minutos dependendo da quantidade de produtos
+• Faça login manualmente quando solicitado"""
+        
+        ttk.Label(info_frame, text=info_text, font=("Arial", 9)).pack(anchor="w")
+        
+        # Frame de progresso (inicialmente oculto)
+        self.affiliate_progress_frame = ttk.LabelFrame(main_frame, text="Progresso", padding="10")
+        
+        # Progress bar para afiliados
+        self.affiliate_progress_var = tk.StringVar(value="Pronto para processar...")
+        self.affiliate_progress_label = ttk.Label(self.affiliate_progress_frame, textvariable=self.affiliate_progress_var)
+        self.affiliate_progress_label.pack(pady=(0, 5))
+        
+        self.affiliate_progress_bar = ttk.Progressbar(self.affiliate_progress_frame, mode="determinate", length=400)
+        self.affiliate_progress_bar.pack(pady=(0, 5))
+        
+        # Label de estatísticas
+        self.affiliate_stats_var = tk.StringVar()
+        self.affiliate_stats_label = ttk.Label(self.affiliate_progress_frame, textvariable=self.affiliate_stats_var)
+        self.affiliate_stats_label.pack()
+        
+        # Frame de botões
+        buttons_frame = ttk.Frame(main_frame)
+        buttons_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        # Variáveis de controle
+        self.affiliate_processing = False
+        
+        def on_process():
+            # Obter arquivo selecionado
+            selection = files_tree.selection()
+            if not selection:
+                messagebox.showwarning("Aviso", "Selecione um arquivo para processar")
+                return
+            
+            # Obter o arquivo correspondente
+            item = files_tree.item(selection[0])
+            filename = item['values'][0]
+            selected_file = None
+            
+            for file_path in product_files:
+                if os.path.basename(file_path) == filename:
+                    selected_file = file_path
+                    break
+            
+            if not selected_file:
+                messagebox.showerror("Erro", "Arquivo selecionado não encontrado")
+                return
+            
+            # Confirmar processamento
+            product_count = item['values'][2]
+            confirm = messagebox.askyesno(
+                "Confirmar Processamento",
+                f"Processar arquivo '{filename}' com {product_count} produtos?\n\nEsta operação pode demorar alguns minutos."
+            )
+            
+            if not confirm:
+                return
+            
+            # Mostrar frame de progresso
+            self.affiliate_progress_frame.pack(fill=tk.X, pady=(10, 0))
+            
+            # Desabilitar botão
+            process_btn.configure(state="disabled")
+            close_btn.configure(text="Cancelar", command=lambda: self._cancel_affiliate_processing(affiliate_window))
+            
+            # Executar processamento em thread
+            thread = threading.Thread(
+                target=self._run_affiliate_generation,
+                args=(selected_file, affiliate_window, process_btn, close_btn)
+            )
+            thread.daemon = True
+            thread.start()
+        
+        def on_close():
+            if not self.affiliate_processing:
+                affiliate_window.destroy()
+            else:
+                if messagebox.askyesno("Confirmar", "Processamento em andamento.\nDeseja realmente fechar?"):
+                    self.affiliate_processing = False
+                    affiliate_window.destroy()
+        
+        # Botões
+        process_btn = ttk.Button(buttons_frame, text="🚀 Processar Arquivo", command=on_process)
+        process_btn.pack(side=tk.LEFT, padx=(0, 10))
+        
+        close_btn = ttk.Button(buttons_frame, text="Fechar", command=on_close)
+        close_btn.pack(side=tk.RIGHT)
+        
+        # Protocolo de fechamento
+        affiliate_window.protocol("WM_DELETE_WINDOW", on_close)
+    
+    def _run_affiliate_generation(self, file_path, window, process_btn, close_btn):
+        """Executar geração de links em thread separada"""
+        try:
+            self.affiliate_processing = True
+            
+            # Callback para atualizar progresso
+            def progress_callback(current, total, message="Processando..."):
+                window.after(0, self._update_affiliate_progress, current, total, message)
+            
+            # Atualizar UI inicial
+            window.after(0, self._update_affiliate_progress, 0, 100, "Iniciando processamento...")
+            
+            # Executar processamento assíncrono
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            async def process():
+                async with AffiliateManager() as affiliate_manager:
+                    return await affiliate_manager.process_product_file(file_path)
+            
+            results = loop.run_until_complete(process())
+            loop.close()
+            
+            # Verificar resultados
+            if "error" in results:
+                window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante processamento:\n{results['error']}"))
+            else:
+                success_count = results.get('success_count', 0)
+                error_count = results.get('error_count', 0)
+                total_products = success_count + error_count
+                
+                # Estatísticas finais
+                stats_msg = f"✅ Concluído! {success_count}/{total_products} links gerados"
+                if error_count > 0:
+                    stats_msg += f" ({error_count} falhas)"
+                
+                window.after(0, self.affiliate_stats_var.set, stats_msg)
+                window.after(0, self.affiliate_progress_var.set, "Processamento concluído!")
+                window.after(0, lambda: self.affiliate_progress_bar.configure(value=100))
+                
+                # Mostrar resultado
+                window.after(0, lambda: messagebox.showinfo(
+                    "Sucesso",
+                    f"Processamento concluído!\n\n"
+                    f"✅ Links gerados: {success_count}\n"
+                    f"❌ Falhas: {error_count}\n"
+                    f"📁 Resultados salvos na pasta 'data'"
+                ))
+        
+        except Exception as e:
+            window.after(0, lambda: messagebox.showerror("Erro", f"Erro inesperado:\n{str(e)}"))
+            window.after(0, self.affiliate_progress_var.set, f"Erro: {str(e)}")
+        
+        finally:
+            self.affiliate_processing = False
+            # Reabilitar botões
+            window.after(0, lambda: process_btn.configure(state="normal"))
+            window.after(0, lambda: close_btn.configure(text="Fechar"))
+    
+    def _update_affiliate_progress(self, current, total, message=""):
+        """Atualizar progresso da geração de links"""
+        if total > 0:
+            percentage = (current / total) * 100
+            self.affiliate_progress_bar.configure(value=percentage)
+        
+        if message:
+            progress_text = f"{message}"
+            if total > 0:
+                progress_text += f" ({current}/{total} - {percentage:.0f}%)"
+            self.affiliate_progress_var.set(progress_text)
+    
+    def _cancel_affiliate_processing(self, window):
+        """Cancelar processamento de links de afiliado"""
+        if messagebox.askyesno("Cancelar", "Deseja realmente cancelar o processamento?"):
+            self.affiliate_processing = False
+            window.destroy()
     
     def run(self):
         """Executar aplicação"""
