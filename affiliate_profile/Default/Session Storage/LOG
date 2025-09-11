@@ -1,3 +1,5 @@
-2025/09/10-22:47:35.375 8c1d Reusing MANIFEST /home/lusca/afiliado/affiliate_profile/Default/Session Storage/MANIFEST-000001
-2025/09/10-22:47:35.376 8c1d Recovering log #4
-2025/09/10-22:47:35.376 8c1d Reusing old log /home/lusca/afiliado/affiliate_profile/Default/Session Storage/000004.log 
+2025/09/11-00:03:44.633 a023 Reusing MANIFEST /home/lusca/afiliado/affiliate_profile/Default/Session Storage/MANIFEST-000001
+2025/09/11-00:03:44.634 a023 Recovering log #4
+2025/09/11-00:03:44.635 a023 Level-0 table #7: started
+2025/09/11-00:03:44.638 a023 Level-0 table #7: 59738 bytes OK
+2025/09/11-00:03:44.641 a023 Delete type=0 #4

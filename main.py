@@ -1,455 +1,709 @@
 #!/usr/bin/env python3
 """
-Sistema Moderno de Web Scraping - Mercado Livre v2.0
-Interface CLI com Rich e funcionalidades avançadas
+Interface Gráfica para Mercado Livre Scraper
+Tkinter GUI simples e limpa
 """
 
+import tkinter as tk
+from tkinter import ttk, messagebox, filedialog
 import asyncio
-import sys
-import os
+import threading
 from datetime import datetime
+import json
+import os
+import webbrowser
 from typing import List, Optional
-
-# Adicionar path do projeto
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Rich imports para UI moderna
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.prompt import Prompt, IntPrompt, Confirm
-from rich.layout import Layout
-from rich.text import Text
-from rich.align import Align
-from rich import box
-import click
 
 # Imports do sistema
 from scrapers.engines.playwright_engine import PlaywrightEngine
-from scrapers.utils.cache import ScraperCache
 from scrapers.utils.validators import Product
 from scrapers.config import ScraperConfig
 from scrapers.affiliate_manager import AffiliateManager
 
-console = Console()
-
-class ModernScraperCLI:
-    """Interface CLI moderna para o scraper"""
+class MercadoLivreScraper:
+    """Interface gráfica principal para o scraper"""
     
     def __init__(self):
-        self.engine: Optional[PlaywrightEngine] = None
-        self.cache: Optional[ScraperCache] = None
+        self.root = tk.Tk()
+        self.root.title("🛒 Mercado Livre Scraper v2.0")
+        self.root.geometry("1000x700")
+        self.root.configure(bg="#f0f0f0")
+        
+        # Variáveis
+        self.products: List[Product] = []
         self.config = ScraperConfig()
+        self.is_scraping = False
+        self.product_urls = {}  # Mapear item_id -> URL dos produtos
         
-    def show_banner(self):
-        """Exibir banner do sistema"""
-        banner_text = Text()
-        banner_text.append("🛒 MERCADO LIVRE SCRAPER v2.0\n", style="bold blue")
-        banner_text.append("Sistema Moderno de Web Scraping\n", style="cyan")
-        banner_text.append("Playwright + Anti-Detecção + Cache Inteligente", style="dim")
+        # Setup da interface
+        self.setup_ui()
         
-        banner_panel = Panel(
-            Align.center(banner_text),
-            box=box.DOUBLE,
-            border_style="blue",
-            padding=(1, 2)
+    def setup_ui(self):
+        """Configurar interface do usuário"""
+        
+        # Frame principal
+        main_frame = ttk.Frame(self.root, padding="10")
+        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Configurar grid
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        main_frame.columnconfigure(1, weight=1)
+        main_frame.rowconfigure(3, weight=1)
+        
+        # Título
+        title_label = ttk.Label(
+            main_frame, 
+            text="🛒 Mercado Livre Scraper",
+            font=("Arial", 16, "bold")
         )
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
         
-        console.print(banner_panel)
-        console.print()
+        # Frame de busca
+        search_frame = ttk.LabelFrame(main_frame, text="Buscar Produtos", padding="10")
+        search_frame.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
+        search_frame.columnconfigure(1, weight=1)
+        
+        # Campo de busca
+        ttk.Label(search_frame, text="Termo:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+        self.search_entry = ttk.Entry(search_frame, width=50)
+        self.search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(0, 10))
+        
+        # Quantidade
+        ttk.Label(search_frame, text="Qtd:").grid(row=0, column=2, sticky=tk.W, padx=(10, 5))
+        self.quantity_var = tk.StringVar(value="20")
+        self.quantity_spin = ttk.Spinbox(
+            search_frame, 
+            from_=1, 
+            to=100, 
+            textvariable=self.quantity_var,
+            width=5
+        )
+        self.quantity_spin.grid(row=0, column=3, padx=(0, 10))
+        
+        # Botões de ação
+        self.search_btn = ttk.Button(
+            search_frame, 
+            text="🔍 Buscar Termo",
+            command=self.search_products,
+            style="Accent.TButton"
+        )
+        self.search_btn.grid(row=0, column=4, padx=5)
+        
+        self.category_btn = ttk.Button(
+            search_frame, 
+            text="🏷️ Por Categoria",
+            command=self.search_category
+        )
+        self.category_btn.grid(row=0, column=5, padx=5)
+        
+        self.offers_btn = ttk.Button(
+            search_frame, 
+            text="🔥 Ofertas",
+            command=self.search_offers
+        )
+        self.offers_btn.grid(row=0, column=6, padx=5)
+        
+        # Frame de filtros
+        filter_frame = ttk.LabelFrame(main_frame, text="Filtros", padding="10")
+        filter_frame.grid(row=2, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
+        filter_frame.columnconfigure(3, weight=1)
+        
+        # Filtro de preço
+        ttk.Label(filter_frame, text="Preço Min:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+        self.min_price_var = tk.StringVar()
+        ttk.Entry(filter_frame, textvariable=self.min_price_var, width=10).grid(row=0, column=1, padx=(0, 10))
+        
+        ttk.Label(filter_frame, text="Preço Max:").grid(row=0, column=2, sticky=tk.W, padx=(0, 5))
+        self.max_price_var = tk.StringVar()
+        ttk.Entry(filter_frame, textvariable=self.max_price_var, width=10).grid(row=0, column=3, padx=(0, 10))
+        
+        # Filtro de categoria
+        ttk.Label(filter_frame, text="Categoria:").grid(row=0, column=4, sticky=tk.W, padx=(10, 5))
+        self.category_filter_var = tk.StringVar(value="Todas")
+        self.category_filter = ttk.Combobox(
+            filter_frame, 
+            textvariable=self.category_filter_var,
+            values=[
+                "Todas", 
+                "Eletrônicos, Áudio e Vídeo", 
+                "Celulares e Telefones", 
+                "Informática", 
+                "Casa, Móveis e Decoração",
+                "Eletrodomésticos e Casa",
+                "Roupas e Calçados",
+                "Esportes e Fitness",
+                "Livros, Revistas e Comics",
+                "Saúde e Beleza",
+                "Games",
+                "Carros, Motos e Outros",
+                "Relógios e Joias"
+            ],
+            state="readonly",
+            width=20
+        )
+        self.category_filter.grid(row=0, column=5, padx=(0, 10))
+        
+        # Botão aplicar filtros
+        ttk.Button(
+            filter_frame, 
+            text="🔄 Aplicar Filtros",
+            command=self.apply_filters
+        ).grid(row=0, column=6, padx=5)
+        
+        # Frame dos resultados
+        results_frame = ttk.LabelFrame(main_frame, text="Resultados", padding="10")
+        results_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
+        results_frame.columnconfigure(0, weight=1)
+        results_frame.rowconfigure(0, weight=1)
+        
+        # Treeview para produtos
+        columns = ("nome", "categoria", "preco", "desconto", "frete", "link")
+        self.tree = ttk.Treeview(results_frame, columns=columns, show="headings", height=15)
+        
+        # Definir cabeçalhos
+        self.tree.heading("nome", text="Nome do Produto")
+        self.tree.heading("categoria", text="Categoria")
+        self.tree.heading("preco", text="Preço")
+        self.tree.heading("desconto", text="Desconto")
+        self.tree.heading("frete", text="Frete Grátis")
+        self.tree.heading("link", text="Link")
+        
+        # Definir larguras das colunas
+        self.tree.column("nome", width=300)  # Reduzido para dar espaço ao link
+        self.tree.column("categoria", width=120)
+        self.tree.column("preco", width=180)  # Maior para mostrar preço de/por
+        self.tree.column("desconto", width=80)
+        self.tree.column("frete", width=80)
+        self.tree.column("link", width=100)
+        
+        # Scrollbars
+        v_scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=self.tree.yview)
+        h_scrollbar = ttk.Scrollbar(results_frame, orient="horizontal", command=self.tree.xview)
+        self.tree.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
+        # Grid treeview e scrollbars
+        self.tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        h_scrollbar.grid(row=1, column=0, sticky=(tk.W, tk.E))
+        
+        # Bind para cliques na coluna de link
+        self.tree.bind("<Button-1>", self.on_treeview_click)
+        
+        # Frame de ações
+        actions_frame = ttk.Frame(main_frame, padding="5")
+        actions_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E))
+        
+        # Botões de ação
+        ttk.Button(
+            actions_frame, 
+            text="💾 Exportar Excel",
+            command=self.export_excel
+        ).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(
+            actions_frame, 
+            text="📄 Exportar JSON",
+            command=self.export_json
+        ).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(
+            actions_frame, 
+            text="🔗 Gerar Links Afiliado",
+            command=self.generate_affiliate_links
+        ).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(
+            actions_frame, 
+            text="🗑️ Limpar",
+            command=self.clear_results
+        ).pack(side=tk.LEFT, padx=5)
+        
+        # Label de status
+        self.status_var = tk.StringVar(value="Pronto para buscar produtos")
+        self.status_label = ttk.Label(actions_frame, textvariable=self.status_var)
+        self.status_label.pack(side=tk.RIGHT, padx=10)
+        
+        # Progress bar
+        self.progress = ttk.Progressbar(actions_frame, mode="determinate", length=200)
+        self.progress.pack(side=tk.RIGHT, padx=(0, 10))
+        
+    def update_status(self, message: str):
+        """Atualizar status na interface"""
+        self.status_var.set(message)
+        self.root.update_idletasks()
     
-    def show_menu(self) -> str:
-        """Exibir menu principal"""
-        menu_table = Table(show_header=False, box=box.SIMPLE, padding=(0, 2))
-        menu_table.add_column("Opção", style="bold cyan", width=4)
-        menu_table.add_column("Descrição", style="white")
-        menu_table.add_column("Status", style="green")
+    def start_progress(self, max_value=100):
+        """Iniciar progress bar"""
+        self.progress['maximum'] = max_value
+        self.progress['value'] = 0
+        self.is_scraping = True
         
-        menu_options = [
-            ("1", "🔍 Buscar produtos por termo", "✅ Disponível"),
-            ("2", "🏷️ Buscar por categoria/nicho", "✅ Disponível"), 
-            ("3", "🔥 Coletar ofertas e promoções", "✅ Disponível"),
-            ("4", "🔗 Gerar links de afiliado", "✅ Novo!"),
-            ("5", "📊 Ver estatísticas do cache", "✅ Disponível"),
-            ("6", "🧹 Limpar cache antigo", "✅ Disponível"),
-            ("7", "⚙️ Configurações do sistema", "✅ Disponível"),
-            ("0", "❌ Sair", "")
-        ]
-        
-        for option, description, status in menu_options:
-            menu_table.add_row(option, description, status)
-        
-        menu_panel = Panel(
-            menu_table,
-            title="[bold]Menu Principal[/bold]",
-            border_style="cyan",
-            padding=(1, 1)
-        )
-        
-        console.print(menu_panel)
-        
-        return Prompt.ask(
-            "\n[bold cyan]➡️ Escolha uma opção[/bold cyan]",
-            choices=["0", "1", "2", "3", "4", "5", "6", "7"],
-            default="1"
-        )
+        # Desabilitar botões durante scraping
+        for widget in [self.search_btn, self.category_btn, self.offers_btn]:
+            widget.configure(state="disabled")
     
-    def show_categories(self) -> str:
-        """Exibir categorias disponíveis"""
-        categories_table = Table(show_header=False, box=box.SIMPLE)
-        categories_table.add_column("ID", style="bold yellow", width=3)
-        categories_table.add_column("Categoria", style="cyan")
-        categories_table.add_column("Código ML", style="dim")
+    def update_progress(self, current_value, max_value=None, message=""):
+        """Atualizar progresso"""
+        if max_value:
+            self.progress['maximum'] = max_value
+        self.progress['value'] = current_value
         
-        for i, (name, code) in enumerate(self.config.CATEGORIES.items(), 1):
-            categories_table.add_row(
-                str(i),
-                name.capitalize().replace('_', ' '),
-                code
-            )
+        # Calcular porcentagem
+        percentage = (current_value / self.progress['maximum']) * 100 if self.progress['maximum'] > 0 else 0
         
-        panel = Panel(
-            categories_table,
-            title="[bold]Categorias Disponíveis[/bold]",
-            border_style="yellow"
-        )
+        # Atualizar status com informações detalhadas
+        if message:
+            status_msg = f"{message} {current_value}/{int(self.progress['maximum'])} ({percentage:.0f}%)"
+            self.update_status(status_msg)
         
-        console.print(panel)
-        
-        choice = Prompt.ask(
-            "\n[yellow]Digite o número ou nome da categoria[/yellow]",
-            default="1"
-        )
-        
-        # Converter escolha
-        try:
-            if choice.isdigit():
-                idx = int(choice) - 1
-                categories = list(self.config.CATEGORIES.keys())
-                if 0 <= idx < len(categories):
-                    return categories[idx]
-            else:
-                choice_lower = choice.lower().replace(' ', '_')
-                if choice_lower in self.config.CATEGORIES:
-                    return choice_lower
-        except:
-            pass
-        
-        return "eletronicos"  # Default
+        self.root.update_idletasks()
     
-    def get_search_params(self) -> tuple:
-        """Obter parâmetros de busca"""
-        max_products = IntPrompt.ask(
-            "[green]Quantos produtos coletar?[/green]",
-            default=20,
-            show_default=True
-        )
+    def stop_progress(self):
+        """Parar progress bar"""
+        self.progress['value'] = 0
+        self.is_scraping = False
         
-        use_cache = Confirm.ask(
-            "[blue]Usar cache (mais rápido)?[/blue]",
-            default=True
-        )
-        
-        return max_products, use_cache
+        # Reabilitar botões
+        for widget in [self.search_btn, self.category_btn, self.offers_btn]:
+            widget.configure(state="normal")
     
-    async def display_products(self, products: List[Product], title: str = "Produtos Encontrados"):
-        """Exibir produtos em tabela formatada"""
-        if not products:
-            console.print("[red]❌ Nenhum produto encontrado[/red]")
-            return
-        
-        # Tabela de produtos
-        table = Table(box=box.ROUNDED, title=f"[bold]{title}[/bold]")
-        table.add_column("#", style="bold yellow", width=3)
-        table.add_column("Nome", style="cyan", max_width=30)
-        table.add_column("Categoria", style="magenta", justify="center", width=12)
-        table.add_column("Preços", style="bold green", justify="right", width=18)
-        table.add_column("Desconto", style="red", justify="center", width=10)
-        table.add_column("Link", style="blue", justify="left", width=15)
-        table.add_column("Frete", style="green", justify="center", width=8)
-        
-        for i, product in enumerate(products, 1):  # Mostrar todos os produtos coletados
-            # Nome (truncado para nova largura)
-            name = product.name[:27] + "..." if len(product.name) > 30 else product.name
+    def add_products_to_tree(self, products: List[Product]):
+        """Adicionar produtos à tabela"""
+        for product in products:
+            # Formatação dos dados
+            nome = product.name[:50] + "..." if len(product.name) > 50 else product.name
+            categoria = product.category or "Indefinido"
             
-            # Categoria com emoji e confiança
-            if product.category:
-                category_emoji = {
-                    'eletronicos': '📱',
-                    'celulares': '📱', 
-                    'informatica': '💻',
-                    'casa': '🏠',
-                    'moda': '👔',
-                    'esportes': '⚽',
-                    'livros': '📚',
-                    'beleza': '💄',
-                    'games': '🎮',
-                    'automotivo': '🚗'
-                }.get(product.category, '❓')
-                
-                # Mostrar categoria com indicador de confiança
-                if product.category_confidence >= 0.8:
-                    category_display = f"{category_emoji} {product.category[:8]}"
-                elif product.category_confidence >= 0.5:
-                    category_display = f"{category_emoji} {product.category[:8]}?"
-                else:
-                    category_display = f"{category_emoji} {product.category[:8]}??"
-            else:
-                category_display = "❓ indefinido"
-            
-            # Preços - Mostrar de/por quando há desconto
+            # Formatação de preço (de/por)
             if product.original_price and product.original_price > product.price:
-                # Formato: ~~R$ 899~~ R$ 488
-                original_formatted = f"R$ {product.original_price:,.0f}".replace(',', '.')
-                current_formatted = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-                from rich.text import Text
-                price_display = Text()
-                price_display.append(f"~~{original_formatted}~~", style="dim strikethrough")
-                price_display.append(f" {current_formatted}", style="bold green")
+                # Mostrar: "De R$ 899,00 → R$ 599,00"
+                preco_original = f"R$ {product.original_price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                preco_atual = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                preco = f"De {preco_original} → {preco_atual}"
             else:
                 # Só preço atual
-                price_display = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.') if product.price else "N/A"
+                preco = f"R$ {product.price:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.') if product.price else "N/A"
             
-            # Desconto com emoji para destaque
-            if product.discount_percentage > 0:
-                if product.discount_percentage >= 50:
-                    discount_str = f"🔥 {product.discount_percentage:.0f}%"
-                elif product.discount_percentage >= 30:
-                    discount_str = f"🟡 {product.discount_percentage:.0f}%"
-                else:
-                    discount_str = f"{product.discount_percentage:.0f}%"
-                discount_style = "bold red"
-            else:
-                discount_str = "-"
-                discount_style = "dim"
+            desconto = f"{product.discount_percentage:.0f}%" if product.discount_percentage > 0 else "-"
+            frete = "✅ Sim" if product.free_shipping else "❌ Não"
             
-            # Link clicável do produto
+            # Link - botão clicável
+            link_display = "📋 Copiar" if product.url else "N/A"
+            
+            # Inserir na tree
+            item_id = self.tree.insert("", "end", values=(nome, categoria, preco, desconto, frete, link_display))
+            
+            # Armazenar URL no dicionário para acesso posterior
             if product.url:
-                # Criar link clicável usando hyperlink do Rich
-                from rich.text import Text
-                link_text = Text("🔗 Abrir", style="blue underline")
-                link_text.stylize(f"link {product.url}")
-                link_display = link_text
-            else:
-                link_display = Text("N/A", style="dim")
-            
-            # Frete
-            shipping_str = "✅ Sim" if product.free_shipping else "❌ Não"
-            shipping_style = "green" if product.free_shipping else "red"
-            
-            table.add_row(
-                str(i),
-                name,
-                category_display,
-                price_display,
-                Text(discount_str, style=discount_style),
-                link_display,
-                Text(shipping_str, style=shipping_style)
-            )
-        
-        console.print(table)
-        
-        # Estatísticas
-        if len(products) > 1:
-            prices = [p.price for p in products if p.price]
-            with_discount = [p for p in products if p.discount_percentage > 0]
-            promotions = len([p for p in products if p.is_promotion])
-            free_shipping = len([p for p in products if p.free_shipping])
-            
-            stats_table = Table(show_header=False, box=box.SIMPLE)
-            stats_table.add_column("Métrica", style="bold")
-            stats_table.add_column("Valor", style="cyan")
-            
-            if prices:
-                stats_table.add_row("💰 Preço médio:", f"R$ {sum(prices)/len(prices):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
-                stats_table.add_row("📈 Maior preço:", f"R$ {max(prices):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
-                stats_table.add_row("📉 Menor preço:", f"R$ {min(prices):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
-            
-            # Estatísticas de desconto
-            if with_discount:
-                avg_discount = sum(p.discount_percentage for p in with_discount) / len(with_discount)
-                max_discount = max(p.discount_percentage for p in with_discount)
-                stats_table.add_row("🏷️ Produtos com desconto:", f"{len(with_discount)} ({len(with_discount)/len(products)*100:.1f}%)")
-                stats_table.add_row("📊 Desconto médio:", f"{avg_discount:.1f}%")
-                stats_table.add_row("🔥 Maior desconto:", f"{max_discount:.1f}%")
-                
-                # Economia total
-                total_saved = sum((p.original_price - p.price) for p in with_discount if p.original_price)
-                if total_saved > 0:
-                    stats_table.add_row("💵 Economia total:", f"R$ {total_saved:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.'))
-            
-            stats_table.add_row("🚚 Frete grátis:", f"{free_shipping} ({free_shipping/len(products)*100:.1f}%)")
-            
-            # Estatísticas de categoria
-            categories = {}
-            for p in products:
-                if p.category:
-                    categories[p.category] = categories.get(p.category, 0) + 1
-            
-            if categories:
-                stats_table.add_row("", "")  # Linha separadora
-                stats_table.add_row("🏷️ Categorias encontradas:", "")
-                for category, count in sorted(categories.items(), key=lambda x: x[1], reverse=True):
-                    emoji = {
-                        'eletronicos': '📱', 'celulares': '📱', 'informatica': '💻',
-                        'casa': '🏠', 'moda': '👔', 'esportes': '⚽',
-                        'livros': '📚', 'beleza': '💄', 'games': '🎮', 'automotivo': '🚗'
-                    }.get(category, '❓')
-                    percentage = (count / len(products)) * 100
-                    stats_table.add_row(f"  {emoji} {category.capitalize()}:", f"{count} ({percentage:.1f}%)")
-            
-            stats_panel = Panel(
-                stats_table,
-                title="[bold]📊 Estatísticas[/bold]",
-                border_style="green",
-                width=50
-            )
-            
-            console.print()
-            console.print(stats_panel)
-        
-        # Instruções sobre links clicáveis
-        console.print("\n[dim]💡 Dica: Clique nos links '🔗 Abrir' para acessar os produtos no navegador![/dim]")
-        
-        # Opções simplificadas
-        await self.show_simple_post_collection_menu(products)
+                self.product_urls[item_id] = product.url
     
-    async def show_simple_post_collection_menu(self, products: List[Product]):
-        """Menu simplificado pós-coleta"""
-        
-        console.print()
-        save_choice = Prompt.ask(
-            "[cyan]Deseja salvar os resultados em arquivo?[/cyan]",
-            choices=["s", "n"],
-            default="s"
-        )
-        
-        if save_choice.lower() == "s":
-            await self.save_products(products, "coleta")
-            
-        console.print("\n[green]✅ Pronto! Use os links clicáveis acima para acessar os produtos.[/green]")
+    def clear_results(self):
+        """Limpar resultados"""
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.products.clear()
+        self.product_urls.clear()  # Limpar URLs também
+        self.update_status("Resultados limpos")
     
-    async def show_post_collection_menu(self, products: List[Product]):
-        """Menu interativo pós-coleta para ver links e opções adicionais"""
-        
-        while True:
-            console.print()
-            choices = [
-                "💾 Salvar resultados em arquivo",
-                "🔗 Ver links completos dos produtos", 
-                "🌐 Abrir produto específico no navegador",
-                "📋 Exportar apenas URLs para arquivo",
-                "↩️  Voltar ao menu principal"
-            ]
-            
-            choice = Prompt.ask(
-                "\n[cyan]O que deseja fazer?[/cyan]",
-                choices=[str(i) for i in range(1, len(choices) + 1)],
-                default="1"
-            )
-            
-            choice = int(choice)
-            
-            if choice == 1:
-                await self.save_products(products, "coleta")
-            elif choice == 2:
-                self.show_complete_urls(products)
-            elif choice == 3:
-                await self.open_product_in_browser(products)
-            elif choice == 4:
-                self.export_urls_only(products)
-            elif choice == 5:
-                break
-    
-    def show_complete_urls(self, products: List[Product]):
-        """Mostrar URLs completas dos produtos com links clicáveis"""
-        console.print("\n[bold cyan]🔗 Links Completos dos Produtos[/bold cyan]")
-        console.print()
-        
-        for i, product in enumerate(products, 1):
-            if product.url:
-                # Nome truncado
-                name = product.name[:45] + "..." if len(product.name) > 45 else product.name
-                console.print(f"[yellow]{i:2d}.[/yellow] [cyan]{name}[/cyan]")
-                
-                # URL clicável
-                from rich.text import Text
-                url_text = Text(product.url, style="blue underline")
-                url_text.stylize(f"link {product.url}")
-                console.print(f"    ", end="")
-                console.print(url_text)
-                console.print()
-        
-        input("\n[dim]Pressione Enter para continuar...[/dim]")
-    
-    async def open_product_in_browser(self, products: List[Product]):
-        """Abrir produto específico no navegador"""
-        try:
-            num = Prompt.ask(
-                f"\n[cyan]Digite o número do produto (1-{len(products)})[/cyan]",
-                default="1"
-            )
-            
-            product_num = int(num) - 1
-            
-            if 0 <= product_num < len(products):
-                product = products[product_num]
-                if product.url:
-                    console.print(f"\n[green]🌐 Abrindo produto no navegador...[/green]")
-                    console.print(f"[cyan]{product.name}[/cyan]")
-                    
-                    import webbrowser
-                    webbrowser.open(product.url)
-                    
-                    console.print(f"[green]✅ Produto aberto no seu navegador padrão![/green]")
-                else:
-                    console.print("[red]❌ URL não disponível para este produto[/red]")
-            else:
-                console.print("[red]❌ Número de produto inválido[/red]")
-                
-        except ValueError:
-            console.print("[red]❌ Por favor, digite um número válido[/red]")
-        except Exception as e:
-            console.print(f"[red]❌ Erro ao abrir navegador: {e}[/red]")
-    
-    def export_urls_only(self, products: List[Product]):
-        """Exportar apenas URLs para arquivo texto"""
-        from pathlib import Path
-        
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"data/urls_produtos_{timestamp}.txt"
-        
-        # Criar diretório se não existir
-        Path("data").mkdir(exist_ok=True)
-        
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write("# URLs dos Produtos do Mercado Livre\n")
-            f.write(f"# Extraído em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
-            f.write(f"# Total de produtos: {len(products)}\n\n")
-            
-            for i, product in enumerate(products, 1):
-                if product.url:
-                    f.write(f"{i:2d}. {product.name}\n")
-                    f.write(f"    {product.url}\n\n")
-        
-        console.print(f"\n[green]✅ URLs exportadas para: {filename}[/green]")
-    
-    async def save_products(self, products: List[Product], search_type: str):
-        """Salvar produtos em arquivo automaticamente"""
-        if not products:
+    def on_treeview_click(self, event):
+        """Handler para cliques na TreeView"""
+        # Identificar onde foi o clique
+        region = self.tree.identify_region(event.x, event.y)
+        if region != "cell":
             return
         
-        # Salvar automaticamente sem perguntar
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"data/produtos_{search_type}_{timestamp}.json"
+        # Identificar item e coluna
+        item = self.tree.identify_row(event.y)
+        column = self.tree.identify_column(event.x)
         
-        # Criar diretório se não existir
-        os.makedirs("data", exist_ok=True)
+        # Verificar se clicou na coluna de link (6ª coluna = #6)
+        if column == "#6" and item:
+            # Obter URL do dicionário
+            url = self.product_urls.get(item)
+            if url:
+                self.show_link_menu(event, url)
+    
+    def show_link_menu(self, event, url):
+        """Mostrar menu de opções para o link"""
+        # Criar menu popup
+        popup_menu = tk.Menu(self.root, tearoff=0)
         
-        # Salvar como JSON com formato melhorado
-        import json
-        with open(filename, 'w', encoding='utf-8') as f:
+        # Função para fechar menu e executar ação
+        def close_menu_and_copy():
+            popup_menu.unpost()
+            popup_menu.destroy()
+            self.copy_to_clipboard(url)
+        
+        def close_menu_and_open():
+            popup_menu.unpost()
+            popup_menu.destroy()
+            self.open_in_browser(url)
+        
+        popup_menu.add_command(
+            label="📋 Copiar Link", 
+            command=close_menu_and_copy
+        )
+        popup_menu.add_command(
+            label="🌐 Abrir no Navegador", 
+            command=close_menu_and_open
+        )
+        
+        # Função para fechar menu ao clicar fora
+        def close_on_click_outside(e):
+            # Verificar se clique foi fora do menu
+            try:
+                if popup_menu.winfo_exists():
+                    popup_menu.unpost()
+                    popup_menu.destroy()
+            except:
+                pass
+            # Remover bind após uso
+            self.root.unbind("<Button-1>")
+        
+        # Mostrar menu na posição do mouse
+        try:
+            popup_menu.tk_popup(event.x_root, event.y_root)
+            popup_menu.grab_set()  # Capturar eventos
+            
+            # Bind para fechar ao clicar fora (com delay para não interferir com o clique atual)
+            self.root.after(100, lambda: self.root.bind("<Button-1>", close_on_click_outside))
+            
+        except Exception:
+            # Se der erro, tentar fechar menu
+            try:
+                popup_menu.unpost()
+                popup_menu.destroy()
+            except:
+                pass
+    
+    def copy_to_clipboard(self, url):
+        """Copiar URL para clipboard"""
+        self.root.clipboard_clear()
+        self.root.clipboard_append(url)
+        self.root.update()  # Garantir que o clipboard seja atualizado
+        self.update_status("Link copiado para a área de transferência")
+    
+    def open_in_browser(self, url):
+        """Abrir URL no navegador padrão"""
+        try:
+            webbrowser.open(url)
+            self.update_status("Link aberto no navegador")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Não foi possível abrir o link: {e}")
+    
+    def search_products(self):
+        """Buscar produtos por termo"""
+        search_term = self.search_entry.get().strip()
+        if not search_term:
+            messagebox.showwarning("Aviso", "Digite um termo de busca")
+            return
+        
+        quantity = int(self.quantity_var.get())
+        
+        # Executar busca em thread separada
+        thread = threading.Thread(
+            target=self._run_search,
+            args=(search_term, quantity, "term")
+        )
+        thread.daemon = True
+        thread.start()
+    
+    def search_category(self):
+        """Buscar produtos por múltiplas categorias"""
+        quantity = int(self.quantity_var.get())
+        
+        # Diálogo para escolher categorias
+        category_window = tk.Toplevel(self.root)
+        category_window.title("Escolher Categorias")
+        category_window.geometry("350x500")
+        category_window.transient(self.root)
+        
+        ttk.Label(category_window, text="Selecione uma ou mais categorias:", font=("Arial", 12)).pack(pady=10)
+        
+        # Frame com scroll para as categorias
+        canvas = tk.Canvas(category_window)
+        scrollbar = ttk.Scrollbar(category_window, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Lista de categorias com checkboxes
+        categories = list(self.config.CATEGORIES.keys())
+        category_vars = {}
+        
+        for category in categories:
+            var = tk.BooleanVar()
+            category_vars[category] = var
+            ttk.Checkbutton(
+                scrollable_frame,
+                text=category.capitalize().replace('_', ' '),
+                variable=var
+            ).pack(anchor="w", padx=20, pady=2)
+        
+        canvas.pack(side="left", fill="both", expand=True, padx=10)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Frame para botões
+        button_frame = ttk.Frame(category_window)
+        button_frame.pack(fill="x", padx=10, pady=10)
+        
+        def select_all():
+            for var in category_vars.values():
+                var.set(True)
+        
+        def select_none():
+            for var in category_vars.values():
+                var.set(False)
+        
+        def on_search():
+            # Obter categorias selecionadas
+            selected_categories = [
+                category for category, var in category_vars.items() 
+                if var.get()
+            ]
+            
+            if not selected_categories:
+                messagebox.showwarning("Aviso", "Selecione pelo menos uma categoria")
+                return
+            
+            category_window.destroy()
+            
+            # Executar busca para múltiplas categorias
+            thread = threading.Thread(
+                target=self._run_search,
+                args=(selected_categories, quantity, "categories")
+            )
+            thread.daemon = True
+            thread.start()
+        
+        # Botões de ação
+        ttk.Button(button_frame, text="Selecionar Todas", command=select_all).pack(side="left", padx=5)
+        ttk.Button(button_frame, text="Limpar Seleção", command=select_none).pack(side="left", padx=5)
+        ttk.Button(button_frame, text="Buscar", command=on_search).pack(side="right", padx=5)
+    
+    def search_offers(self):
+        """Buscar ofertas"""
+        quantity = int(self.quantity_var.get())
+        
+        thread = threading.Thread(
+            target=self._run_search,
+            args=("", quantity, "offers")
+        )
+        thread.daemon = True
+        thread.start()
+    
+    def _run_search(self, term, quantity: int, search_type: str):
+        """Executar busca (roda em thread separada)"""
+        try:
+            # Atualizar UI
+            self.root.after(0, self.start_progress, quantity)
+            self.root.after(0, self.update_status, f"Iniciando busca...")
+            
+            # Callback para atualizar progresso
+            def progress_callback(current, total, message="Buscando..."):
+                self.root.after(0, self.update_progress, current, total, message)
+            
+            # Executar busca assíncrona
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            async def search():
+                async with PlaywrightEngine() as engine:
+                    if search_type == "term":
+                        if hasattr(engine, 'search_products_with_progress'):
+                            return await engine.search_products_with_progress(term, quantity, progress_callback)
+                        else:
+                            return await engine.search_products(term, quantity)
+                    elif search_type == "category":
+                        if hasattr(engine, 'search_category_with_progress'):
+                            return await engine.search_category_with_progress(term, quantity, progress_callback)
+                        else:
+                            return await engine.search_category(term, quantity)
+                    elif search_type == "categories":
+                        # Busca por múltiplas categorias
+                        all_products = []
+                        for i, category in enumerate(term):
+                            self.root.after(0, self.update_status, f"Buscando categoria {i+1}/{len(term)}: {category}")
+                            if hasattr(engine, 'search_category_with_progress'):
+                                category_products = await engine.search_category_with_progress(
+                                    category, quantity // len(term), progress_callback
+                                )
+                            else:
+                                category_products = await engine.search_category(category, quantity // len(term))
+                            if category_products:
+                                all_products.extend(category_products)
+                        return all_products
+                    elif search_type == "offers":
+                        if hasattr(engine, 'search_offers_with_progress'):
+                            return await engine.search_offers_with_progress(quantity, progress_callback)
+                        else:
+                            return await engine.search_offers(quantity)
+            
+            products = loop.run_until_complete(search())
+            loop.close()
+            
+            # Atualizar UI com resultados
+            if products:
+                self.products.extend(products)
+                self.root.after(0, self.add_products_to_tree, products)
+                
+                # Salvar automaticamente
+                self.root.after(0, self._auto_save_products, products, search_type)
+                
+                self.root.after(0, self.update_status, f"✅ Concluído! {len(products)} produtos encontrados e salvos")
+            else:
+                self.root.after(0, self.update_status, "❌ Nenhum produto encontrado")
+                self.root.after(0, messagebox.showinfo, "Resultado", "Nenhum produto encontrado")
+            
+        except Exception as e:
+            self.root.after(0, self.update_status, f"❌ Erro: {str(e)}")
+            self.root.after(0, messagebox.showerror, "Erro", f"Erro ao buscar produtos:\n{str(e)}")
+        
+        finally:
+            self.root.after(0, self.stop_progress)
+    
+    def apply_filters(self):
+        """Aplicar filtros aos resultados"""
+        if not self.products:
+            messagebox.showwarning("Aviso", "Nenhum produto para filtrar")
+            return
+        
+        # Obter critérios de filtro
+        min_price_text = self.min_price_var.get().strip()
+        max_price_text = self.max_price_var.get().strip()
+        category_filter = self.category_filter_var.get()
+        
+        # Converter preços
+        min_price = None
+        max_price = None
+        
+        try:
+            if min_price_text:
+                min_price = float(min_price_text.replace(',', '.'))
+        except ValueError:
+            messagebox.showerror("Erro", "Preço mínimo inválido")
+            return
+        
+        try:
+            if max_price_text:
+                max_price = float(max_price_text.replace(',', '.'))
+        except ValueError:
+            messagebox.showerror("Erro", "Preço máximo inválido")
+            return
+        
+        # Aplicar filtros
+        filtered_products = []
+        
+        for product in self.products:
+            # Filtro de preço
+            if min_price and product.price and product.price < min_price:
+                continue
+            if max_price and product.price and product.price > max_price:
+                continue
+            
+            # Filtro de categoria
+            if category_filter != "Todas":
+                if not product.category or product.category != category_filter:
+                    continue
+            
+            filtered_products.append(product)
+        
+        # Limpar e mostrar produtos filtrados
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        
+        self.add_products_to_tree(filtered_products)
+        
+        self.update_status(f"Filtros aplicados: {len(filtered_products)} produtos encontrados")
+    
+    def export_excel(self):
+        """Exportar para Excel"""
+        if not self.products:
+            messagebox.showwarning("Aviso", "Nenhum produto para exportar")
+            return
+        
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")],
+            title="Salvar como Excel"
+        )
+        
+        if filename:
+            try:
+                # Tentar importar pandas para Excel
+                try:
+                    import pandas as pd
+                except ImportError:
+                    messagebox.showerror("Erro", "Pandas não instalado.\nInstale com: pip install pandas openpyxl")
+                    return
+                
+                # Preparar dados para DataFrame
+                data = []
+                for i, product in enumerate(self.products, 1):
+                    data.append({
+                        'Número': i,
+                        'Nome': product.name,
+                        'Categoria': product.category or 'Indefinido',
+                        'Preço': product.price,
+                        'Preço Original': product.original_price,
+                        'Desconto %': product.discount_percentage,
+                        'URL': product.url,
+                        'Frete Grátis': 'Sim' if product.free_shipping else 'Não',
+                        'Em Promoção': 'Sim' if product.is_promotion else 'Não',
+                        'Confiança Categoria': f"{product.category_confidence:.2f}"
+                    })
+                
+                # Criar DataFrame e salvar
+                df = pd.DataFrame(data)
+                
+                # Salvar no Excel com formatação
+                with pd.ExcelWriter(filename, engine='openpyxl') as writer:
+                    df.to_excel(writer, sheet_name='Produtos ML', index=False)
+                    
+                    # Obter worksheet para formatação
+                    worksheet = writer.sheets['Produtos ML']
+                    
+                    # Ajustar largura das colunas
+                    for column in worksheet.columns:
+                        max_length = 0
+                        column = [cell for cell in column]
+                        for cell in column:
+                            try:
+                                if len(str(cell.value)) > max_length:
+                                    max_length = len(str(cell.value))
+                            except:
+                                pass
+                        adjusted_width = min(max_length + 2, 50)
+                        worksheet.column_dimensions[column[0].column_letter].width = adjusted_width
+                
+                messagebox.showinfo("Sucesso", f"Dados exportados para:\n{filename}")
+                
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao exportar:\n{str(e)}")
+    
+    def _auto_save_products(self, products, search_type):
+        """Salvar produtos automaticamente após busca"""
+        if not products:
+            return
+            
+        try:
+            from datetime import datetime
+            import os
+            
+            # Criar diretório se não existir
+            os.makedirs("data", exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"data/produtos_{search_type}_{timestamp}.json"
+            
+            # Preparar dados para salvar
             products_data = []
             for i, product in enumerate(products, 1):
                 data = {
@@ -469,7 +723,7 @@ class ModernScraperCLI:
                 }
                 products_data.append(data)
             
-            # Calcular estatísticas de categoria para o JSON
+            # Calcular estatísticas de categoria
             categories_stats = {}
             for product in products:
                 if product.category:
@@ -482,11 +736,11 @@ class ModernScraperCLI:
                     categories_stats[product.category]["total"] += 1
                     categories_stats[product.category]["confiancas"].append(product.category_confidence)
             
-            # Calcular confiança média para cada categoria
+            # Calcular confiança média
             for category, stats in categories_stats.items():
                 if stats["confiancas"]:
                     stats["confianca_media"] = sum(stats["confiancas"]) / len(stats["confiancas"])
-                    del stats["confiancas"]  # Remover lista temporária
+                    del stats["confiancas"]
             
             final_data = {
                 "info": {
@@ -498,380 +752,516 @@ class ModernScraperCLI:
                 "produtos": products_data
             }
             
-            json.dump(final_data, f, ensure_ascii=False, indent=2)
-        
-        console.print(f"[green]✅ Produtos salvos automaticamente em: {filename}[/green]")
-        console.print(f"[yellow]🔗 Use a opção '4' do menu para gerar links de afiliado[/yellow]")
-    
-    async def search_by_term(self):
-        """Buscar produtos por termo"""
-        search_term = Prompt.ask("[cyan]Digite o termo de busca[/cyan]")
-        max_products, use_cache = self.get_search_params()
-        
-        # Verificar cache primeiro
-        if use_cache:
-            async with ScraperCache() as cache:
-                cached_products = await cache.get_cached_search(
-                    "search_term", 
-                    {"term": search_term, "max": max_products}
-                )
+            # Salvar arquivo
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(final_data, f, ensure_ascii=False, indent=2)
                 
-                if cached_products:
-                    console.print("[yellow]📦 Usando resultados do cache[/yellow]")
-                    await self.display_products(cached_products, f"Busca: {search_term}")
-                    await self.save_products(cached_products, f"busca_{search_term.replace(' ', '_')}")
-                    return
-        
-        # Buscar com engine
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            console=console
-        ) as progress:
+            messagebox.showinfo("Auto-salvo", f"Produtos salvos automaticamente:\n{filename}\n\n🔗 Use 'Gerar Links Afiliado' para criar os links!")
             
-            task = progress.add_task(f"🔍 Buscando '{search_term}'...", total=None)
-            
-            async with PlaywrightEngine() as engine:
-                def update_progress(current, total, description):
-                    progress.update(task, description=description)
-                
-                products = await engine.search_products_with_progress(search_term, max_products, update_progress)
-            
-            progress.update(task, completed=True)
-        
-        if products:
-            # Salvar no cache
-            if use_cache:
-                async with ScraperCache() as cache:
-                    await cache.cache_search_results(
-                        "search_term",
-                        {"term": search_term, "max": max_products},
-                        products
-                    )
-                    await cache.save_product_history(products)
-            
-            await self.display_products(products, f"Busca: {search_term}")
-            await self.save_products(products, f"busca_{search_term.replace(' ', '_')}")
-        else:
-            console.print("[red]❌ Nenhum produto encontrado[/red]")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao salvar automaticamente:\n{str(e)}")
     
-    async def search_by_category(self):
-        """Buscar produtos por categoria"""
-        category = self.show_categories()
-        max_products, use_cache = self.get_search_params()
-        
-        # Verificar cache primeiro  
-        if use_cache:
-            async with ScraperCache() as cache:
-                cached_products = await cache.get_cached_search(
-                    "category",
-                    {"category": category, "max": max_products}
-                )
-                
-                if cached_products:
-                    console.print("[yellow]📦 Usando resultados do cache[/yellow]")
-                    await self.display_products(cached_products, f"Categoria: {category.capitalize()}")
-                    await self.save_products(cached_products, f"categoria_{category}")
-                    return
-        
-        # Buscar com engine
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            console=console
-        ) as progress:
-            
-            task = progress.add_task(f"🏷️ Buscando categoria '{category}'...", total=None)
-            
-            async with PlaywrightEngine() as engine:
-                products = await engine.search_category(category, max_products)
-            
-            progress.update(task, completed=True)
-        
-        if products:
-            # Salvar no cache
-            if use_cache:
-                async with ScraperCache() as cache:
-                    await cache.cache_search_results(
-                        "category",
-                        {"category": category, "max": max_products},
-                        products
-                    )
-                    await cache.save_product_history(products)
-            
-            await self.display_products(products, f"Categoria: {category.capitalize()}")
-            await self.save_products(products, f"categoria_{category}")
-        else:
-            console.print("[red]❌ Nenhum produto encontrado[/red]")
-    
-    async def search_offers(self):
-        """Buscar ofertas e promoções"""
-        max_products, use_cache = self.get_search_params()
-        
-        # Verificar cache primeiro
-        if use_cache:
-            async with ScraperCache() as cache:
-                cached_products = await cache.get_cached_search(
-                    "offers",
-                    {"max": max_products}
-                )
-                
-                if cached_products:
-                    console.print("[yellow]📦 Usando resultados do cache[/yellow]")
-                    await self.display_products(cached_products, "🔥 Ofertas e Promoções")
-                    await self.save_products(cached_products, "ofertas")
-                    return
-        
-        # Buscar com engine
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            console=console
-        ) as progress:
-            
-            task = progress.add_task("🔥 Buscando ofertas...", total=None)
-            
-            async with PlaywrightEngine() as engine:
-                products = await engine.search_offers(max_products)
-            
-            progress.update(task, completed=True)
-        
-        if products:
-            # Salvar no cache
-            if use_cache:
-                async with ScraperCache() as cache:
-                    await cache.cache_search_results(
-                        "offers",
-                        {"max": max_products},
-                        products
-                    )
-                    await cache.save_product_history(products)
-            
-            await self.display_products(products, "🔥 Ofertas e Promoções")
-            await self.save_products(products, "ofertas")
-        else:
-            console.print("[red]❌ Nenhuma oferta encontrada[/red]")
-    
-    async def show_cache_stats(self):
-        """Mostrar estatísticas do cache"""
-        async with ScraperCache() as cache:
-            stats = await cache.get_cache_stats()
-        
-        if not stats:
-            console.print("[red]❌ Erro ao obter estatísticas[/red]")
+    def export_json(self):
+        """Exportar para JSON"""
+        if not self.products:
+            messagebox.showwarning("Aviso", "Nenhum produto para exportar")
             return
         
-        stats_table = Table(box=box.ROUNDED, title="[bold]📊 Estatísticas do Cache[/bold]")
-        stats_table.add_column("Métrica", style="bold cyan")
-        stats_table.add_column("Valor", style="white", justify="right")
-        
-        metrics = [
-            ("🔍 Total de buscas em cache", stats.get('total_cached_searches', 0)),
-            ("✅ Buscas válidas no cache", stats.get('valid_cached_searches', 0)),
-            ("📦 Total de produtos rastreados", stats.get('total_products_tracked', 0)),
-            ("🆔 Produtos únicos", stats.get('unique_products', 0))
-        ]
-        
-        for metric, value in metrics:
-            stats_table.add_row(metric, str(value))
-        
-        console.print(stats_table)
-    
-    async def cleanup_cache(self):
-        """Limpar cache antigo"""
-        days = IntPrompt.ask(
-            "[yellow]Remover cache mais antigo que quantos dias?[/yellow]",
-            default=7
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+            title="Salvar como JSON"
         )
         
-        confirm = Confirm.ask(f"[red]Confirma remoção de cache com mais de {days} dias?[/red]")
-        
-        if confirm:
-            async with ScraperCache() as cache:
-                await cache.cleanup_old_cache(days)
-            console.print("[green]✅ Cache limpo com sucesso[/green]")
-        else:
-            console.print("[yellow]Operação cancelada[/yellow]")
+        if filename:
+            try:
+                # Preparar dados
+                export_data = {
+                    "info": {
+                        "total_produtos": len(self.products),
+                        "exportado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    },
+                    "produtos": []
+                }
+                
+                for i, product in enumerate(self.products, 1):
+                    export_data["produtos"].append({
+                        "numero": i,
+                        "nome": product.name,
+                        "categoria": product.category,
+                        "preco": product.price,
+                        "preco_original": product.original_price,
+                        "desconto_percentual": product.discount_percentage,
+                        "url": product.url,
+                        "frete_gratis": product.free_shipping,
+                        "em_promocao": product.is_promotion
+                    })
+                
+                # Salvar arquivo
+                with open(filename, 'w', encoding='utf-8') as f:
+                    json.dump(export_data, f, ensure_ascii=False, indent=2)
+                
+                messagebox.showinfo("Sucesso", f"Dados exportados para:\n{filename}")
+                
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao exportar:\n{str(e)}")
     
-    def show_settings(self):
-        """Mostrar configurações do sistema"""
-        settings_table = Table(box=box.ROUNDED, title="[bold]⚙️ Configurações do Sistema[/bold]")
-        settings_table.add_column("Configuração", style="bold cyan")
-        settings_table.add_column("Valor", style="white")
+    def generate_affiliate_links(self):
+        """Gerar links de afiliado a partir de arquivos de produtos"""
+        # Verificar se há arquivos de produtos disponíveis
+        data_dir = "data"
+        if not os.path.exists(data_dir):
+            messagebox.showwarning("Aviso", "Pasta 'data' não encontrada.\nExecute primeiro uma coleta de produtos.")
+            return
         
-        settings = [
-            ("🌐 URL Base", self.config.BASE_URL),
-            ("⏱️ Delay mínimo", f"{self.config.MIN_DELAY}s"),
-            ("⏱️ Delay máximo", f"{self.config.MAX_DELAY}s"),
-            ("🔄 Tentativas máximas", str(self.config.MAX_RETRIES)),
-            ("📄 Produtos por página", str(self.config.MAX_PRODUCTS_PER_PAGE)),
-            ("📚 Páginas máximas", str(self.config.MAX_PAGES_PER_SEARCH)),
-            ("💾 TTL do cache", f"{60} minutos"),
-            ("🏷️ Categorias disponíveis", str(len(self.config.CATEGORIES)))
-        ]
+        # Buscar arquivos JSON de produtos
+        product_files = []
+        for file in os.listdir(data_dir):
+            if file.startswith("produtos_") and file.endswith(".json"):
+                product_files.append(os.path.join(data_dir, file))
         
-        for setting, value in settings:
-            settings_table.add_row(setting, value)
+        if not product_files:
+            messagebox.showwarning("Aviso", "Nenhum arquivo de produtos encontrado na pasta 'data'.\nExecute primeiro uma coleta de produtos (opções de busca).")
+            return
         
-        console.print(settings_table)
+        # Ordenar por data de modificação (mais recente primeiro)
+        product_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+        
+        # Mostrar janela de seleção
+        self._show_affiliate_window(product_files)
     
-    async def generate_affiliate_links_menu(self):
-        """Menu para gerar links de afiliado"""
-        try:
-            console.print("\n[bold blue]🔗 GERADOR DE LINKS DE AFILIADO[/bold blue]")
-            console.print("Esta funcionalidade converte links de produtos em links de afiliado do Mercado Pago")
-            console.print()
+    def _show_affiliate_window(self, product_files):
+        """Mostrar janela para seleção de arquivo e processamento"""
+        # Criar janela modal
+        affiliate_window = tk.Toplevel(self.root)
+        affiliate_window.title("🔗 Gerador de Links de Afiliado")
+        affiliate_window.geometry("700x500")
+        affiliate_window.transient(self.root)
+        affiliate_window.grab_set()
+        
+        # Centralizar janela
+        affiliate_window.update_idletasks()
+        x = (affiliate_window.winfo_screenwidth() // 2) - (700 // 2)
+        y = (affiliate_window.winfo_screenheight() // 2) - (500 // 2)
+        affiliate_window.geometry(f"700x500+{x}+{y}")
+        
+        # Frame principal
+        main_frame = ttk.Frame(affiliate_window, padding="10")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título e descrição
+        title_label = ttk.Label(
+            main_frame,
+            text="🔗 Gerador de Links de Afiliado",
+            font=("Arial", 14, "bold")
+        )
+        title_label.pack(pady=(0, 10))
+        
+        desc_label = ttk.Label(
+            main_frame,
+            text="Esta ferramenta converte links de produtos em links de afiliado do Mercado Pago",
+            font=("Arial", 10)
+        )
+        desc_label.pack(pady=(0, 20))
+        
+        # Frame para lista de arquivos
+        files_frame = ttk.LabelFrame(main_frame, text="Arquivos de Produtos Disponíveis", padding="10")
+        files_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        
+        # Treeview para arquivos
+        columns = ("arquivo", "data", "produtos")
+        files_tree = ttk.Treeview(files_frame, columns=columns, show="headings", height=8)
+        
+        # Definir cabeçalhos
+        files_tree.heading("arquivo", text="Nome do Arquivo")
+        files_tree.heading("data", text="Data de Criação")
+        files_tree.heading("produtos", text="Produtos")
+        
+        # Definir larguras
+        files_tree.column("arquivo", width=300)
+        files_tree.column("data", width=150)
+        files_tree.column("produtos", width=100)
+        
+        # Scrollbar para a lista
+        files_scrollbar = ttk.Scrollbar(files_frame, orient="vertical", command=files_tree.yview)
+        files_tree.configure(yscrollcommand=files_scrollbar.set)
+        
+        # Grid
+        files_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        files_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Preencher lista de arquivos
+        for file_path in product_files[:10]:  # Mostrar até 10 arquivos
+            filename = os.path.basename(file_path)
+            file_date = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%d/%m/%Y %H:%M")
             
-            # Listar arquivos de produtos disponíveis
-            async with AffiliateManager() as affiliate_manager:
-                product_files = affiliate_manager.list_available_product_files()
-                
-                if not product_files:
-                    console.print("[red]❌ Nenhum arquivo de produtos encontrado na pasta 'data'[/red]")
-                    console.print("[yellow]💡 Execute primeiro uma coleta de produtos (opções 1, 2 ou 3)[/yellow]")
-                    return
-                
-                # Mostrar arquivos disponíveis
-                files_table = Table(box=box.ROUNDED, title="[bold]Arquivos de Produtos Disponíveis[/bold]")
-                files_table.add_column("#", style="bold yellow", width=3)
-                files_table.add_column("Arquivo", style="cyan")
-                files_table.add_column("Data", style="green")
-                
-                for i, filepath in enumerate(product_files[:10], 1):  # Mostrar até 10 arquivos
-                    filename = os.path.basename(filepath)
-                    file_date = datetime.fromtimestamp(os.path.getmtime(filepath)).strftime("%d/%m/%Y %H:%M")
-                    files_table.add_row(str(i), filename, file_date)
-                
-                console.print(files_table)
-                
-                # Escolher arquivo
-                if len(product_files) == 1:
-                    choice = "1"
-                    console.print(f"\n[green]📁 Usando arquivo único disponível[/green]")
-                else:
-                    choice = Prompt.ask(
-                        f"\n[cyan]Digite o número do arquivo (1-{min(len(product_files), 10)})[/cyan]",
-                        default="1"
-                    )
-                
-                try:
-                    file_index = int(choice) - 1
-                    if 0 <= file_index < len(product_files):
-                        selected_file = product_files[file_index]
-                    else:
-                        console.print("[red]❌ Número de arquivo inválido[/red]")
-                        return
-                except ValueError:
-                    console.print("[red]❌ Por favor, digite um número válido[/red]")
-                    return
-                
-                # Confirmar processamento
-                filename = os.path.basename(selected_file)
-                confirm = Confirm.ask(
-                    f"\n[yellow]Processar arquivo '{filename}' para gerar links de afiliado?[/yellow]",
-                    default=True
+            # Tentar contar produtos no arquivo
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    product_count = len(data.get('produtos', []))
+            except:
+                product_count = "?"
+            
+            files_tree.insert("", "end", values=(filename, file_date, product_count))
+        
+        # Frame de informações importantes
+        info_frame = ttk.LabelFrame(main_frame, text="⚠️ Informações Importantes", padding="10")
+        info_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        info_text = """• O navegador será aberto para fazer login no Mercado Livre
+• Você precisa ter uma conta de vendedor/afiliado ativa
+• O processo pode demorar alguns minutos dependendo da quantidade de produtos
+• Faça login manualmente quando solicitado"""
+        
+        ttk.Label(info_frame, text=info_text, font=("Arial", 9)).pack(anchor="w")
+        
+        # Frame de opções
+        options_frame = ttk.LabelFrame(main_frame, text="🔧 Opções", padding="10")
+        options_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Checkbox para modo login apenas
+        self.login_only_var = tk.BooleanVar()
+        login_only_checkbox = ttk.Checkbutton(
+            options_frame,
+            text="🔑 Modo Login Apenas (só abrir navegador para fazer login, sem executar automação)",
+            variable=self.login_only_var,
+            command=self._on_login_mode_change
+        )
+        login_only_checkbox.pack(anchor="w", padx=10, pady=5)
+        
+        # Frame de progresso (inicialmente oculto)
+        self.affiliate_progress_frame = ttk.LabelFrame(main_frame, text="Progresso", padding="10")
+        
+        # Progress bar para afiliados
+        self.affiliate_progress_var = tk.StringVar(value="Pronto para processar...")
+        self.affiliate_progress_label = ttk.Label(self.affiliate_progress_frame, textvariable=self.affiliate_progress_var)
+        self.affiliate_progress_label.pack(pady=(0, 5))
+        
+        self.affiliate_progress_bar = ttk.Progressbar(self.affiliate_progress_frame, mode="determinate", length=400)
+        self.affiliate_progress_bar.pack(pady=(0, 5))
+        
+        # Label de estatísticas
+        self.affiliate_stats_var = tk.StringVar()
+        self.affiliate_stats_label = ttk.Label(self.affiliate_progress_frame, textvariable=self.affiliate_stats_var)
+        self.affiliate_stats_label.pack()
+        
+        # Frame de botões
+        buttons_frame = ttk.Frame(main_frame)
+        buttons_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        # Variáveis de controle
+        self.affiliate_processing = False
+        
+        def on_process():
+            # Obter arquivo selecionado
+            selection = files_tree.selection()
+            if not selection:
+                messagebox.showwarning("Aviso", "Selecione um arquivo para processar")
+                return
+            
+            # Obter o arquivo correspondente
+            item = files_tree.item(selection[0])
+            filename = item['values'][0]
+            selected_file = None
+            
+            for file_path in product_files:
+                if os.path.basename(file_path) == filename:
+                    selected_file = file_path
+                    break
+            
+            if not selected_file:
+                messagebox.showerror("Erro", "Arquivo selecionado não encontrado")
+                return
+            
+            # Verificar se é modo login apenas
+            login_only_mode = self.login_only_var.get()
+            
+            if login_only_mode:
+                # Confirmar modo login apenas
+                confirm = messagebox.askyesno(
+                    "Confirmar Login Manual",
+                    f"🔑 Modo Login Apenas ativado\n\n"
+                    f"🌐 O navegador será aberto na página do Mercado Livre\n"
+                    f"👤 Você poderá fazer login manualmente\n"
+                    f"💾 Cookies serão salvos automaticamente\n\n"
+                    f"Continuar?"
                 )
-                
-                if not confirm:
-                    console.print("[yellow]Operação cancelada[/yellow]")
-                    return
-                
-                # Informações importantes
-                console.print()
-                console.print("[bold red]⚠️ ATENÇÃO:[/bold red]")
-                console.print("• O navegador será aberto para fazer login no Mercado Livre")
-                console.print("• Você precisa ter uma conta de vendedor/afiliado ativa")
-                console.print("• O processo pode demorar alguns minutos")
-                console.print()
-                
-                proceed = Confirm.ask("[cyan]Continuar?[/cyan]", default=True)
-                if not proceed:
-                    console.print("[yellow]Operação cancelada[/yellow]")
-                    return
-                
-                # Processar arquivo
-                with Progress(
-                    SpinnerColumn(),
-                    TextColumn("[progress.description]{task.description}"),
-                    console=console
-                ) as progress:
-                    
-                    task = progress.add_task("🔗 Processando links de afiliado...", total=None)
-                    
-                    results = await affiliate_manager.process_product_file(selected_file)
-                    
-                    progress.update(task, completed=True)
-                
-                # Verificar resultados
-                if "error" in results:
-                    console.print(f"[red]❌ Erro: {results['error']}[/red]")
-                else:
-                    console.print("\n[green]🎉 Processamento concluído com sucesso![/green]")
-                    console.print(f"✅ {results.get('success_count', 0)} links gerados")
-                    console.print(f"❌ {results.get('error_count', 0)} falhas")
-                    
-                    if results.get('success_count', 0) > 0:
-                        console.print("\n[blue]💡 Os links de afiliado foram salvos na pasta 'data'[/blue]")
-                
-        except KeyboardInterrupt:
-            console.print("\n[yellow]⚠️ Operação cancelada pelo usuário[/yellow]")
-        except Exception as e:
-            console.print(f"\n[red]❌ Erro inesperado: {e}[/red]")
-    
-    async def run(self):
-        """Executar interface principal"""
-        try:
-            self.show_banner()
+            else:
+                # Confirmar processamento normal
+                product_count = item['values'][2]
+                confirm = messagebox.askyesno(
+                    "Confirmar Processamento",
+                    f"Processar arquivo '{filename}' com {product_count} produtos?\n\nEsta operação pode demorar alguns minutos."
+                )
             
-            while True:
-                try:
-                    choice = self.show_menu()
-                    
-                    if choice == "0":
-                        console.print("\n[bold blue]👋 Obrigado por usar o ML Scraper v2.0![/bold blue]")
-                        break
-                    elif choice == "1":
-                        await self.search_by_term()
-                    elif choice == "2":
-                        await self.search_by_category()
-                    elif choice == "3":
-                        await self.search_offers()
-                    elif choice == "4":
-                        await self.generate_affiliate_links_menu()
-                    elif choice == "5":
-                        await self.show_cache_stats()
-                    elif choice == "6":
-                        await self.cleanup_cache()
-                    elif choice == "7":
-                        self.show_settings()
-                    
-                    if choice != "0":
-                        console.print("\n[dim]Pressione Enter para continuar...[/dim]")
-                        input()
-                        console.clear()
-                        self.show_banner()
-                
-                except KeyboardInterrupt:
-                    console.print("\n[yellow]⚠️ Operação cancelada pelo usuário[/yellow]")
-                    continue
-                except Exception as e:
-                    console.print(f"\n[red]❌ Erro inesperado: {e}[/red]")
-                    continue
+            if not confirm:
+                return
+            
+            # Mostrar frame de progresso
+            self.affiliate_progress_frame.pack(fill=tk.X, pady=(10, 0))
+            
+            # Desabilitar botão
+            process_btn.configure(state="disabled")
+            close_btn.configure(text="Cancelar", command=lambda: self._cancel_affiliate_processing(affiliate_window))
+            
+            # Executar processamento em thread
+            thread = threading.Thread(
+                target=self._run_affiliate_generation,
+                args=(selected_file, affiliate_window, process_btn, close_btn, login_only_mode)
+            )
+            thread.daemon = True
+            thread.start()
         
-        except KeyboardInterrupt:
-            console.print("\n\n[bold red]👋 Sistema encerrado pelo usuário[/bold red]")
+        def on_close():
+            if not self.affiliate_processing:
+                affiliate_window.destroy()
+            else:
+                if messagebox.askyesno("Confirmar", "Processamento em andamento.\nDeseja realmente fechar?"):
+                    self.affiliate_processing = False
+                    affiliate_window.destroy()
+        
+        # Botões
+        process_btn = ttk.Button(buttons_frame, text="🚀 Processar Arquivo", command=on_process)
+        process_btn.pack(side=tk.LEFT, padx=(0, 10))
+        
+        close_btn = ttk.Button(buttons_frame, text="Fechar", command=on_close)
+        close_btn.pack(side=tk.RIGHT)
+        
+        # Protocolo de fechamento
+        affiliate_window.protocol("WM_DELETE_WINDOW", on_close)
+    
+    def _run_affiliate_generation(self, file_path, window, process_btn, close_btn, login_only_mode=False):
+        """Executar geração de links em thread separada"""
+        try:
+            self.affiliate_processing = True
+            
+            # Callback para atualizar progresso
+            def progress_callback(current, total, message="Processando..."):
+                window.after(0, self._update_affiliate_progress, current, total, message)
+            
+            # Atualizar UI inicial
+            if login_only_mode:
+                window.after(0, self._update_affiliate_progress, 0, 100, "Abrindo navegador para login manual...")
+            else:
+                window.after(0, self._update_affiliate_progress, 0, 100, "Iniciando processamento...")
+            
+            # Executar processamento assíncrono
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            async def process():
+                async with AffiliateManager() as affiliate_manager:
+                    return await affiliate_manager.process_product_file(file_path, login_only_mode)
+            
+            results = loop.run_until_complete(process())
+            loop.close()
+            
+            # Verificar resultados
+            if "error" in results:
+                window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante processamento:\n{results['error']}"))
+            elif results.get('login_only'):
+                # Modo login apenas
+                if results.get('success'):
+                    window.after(0, self.affiliate_progress_var.set, "Login manual concluído!")
+                    window.after(0, lambda: self.affiliate_progress_bar.configure(value=100))
+                    window.after(0, self.affiliate_stats_var.set, "✅ Cookies salvos com sucesso")
+                    
+                    # Mostrar resultado do login
+                    window.after(0, lambda: messagebox.showinfo(
+                        "Login Concluído",
+                        f"✅ Login manual concluído com sucesso!\n\n"
+                        f"💾 Seus cookies foram salvos no perfil\n"
+                        f"🔄 Agora você pode desmarcar 'Modo Login Apenas'\n"
+                        f"⚡ E processar seus arquivos normalmente"
+                    ))
+                else:
+                    window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante login manual:\n{results.get('error', 'Erro desconhecido')}"))
+            else:
+                # Processamento normal
+                success_count = results.get('success_count', 0)
+                error_count = results.get('error_count', 0)
+                total_products = success_count + error_count
+                
+                # Estatísticas finais
+                stats_msg = f"✅ Concluído! {success_count}/{total_products} links gerados"
+                if error_count > 0:
+                    stats_msg += f" ({error_count} falhas)"
+                
+                window.after(0, self.affiliate_stats_var.set, stats_msg)
+                window.after(0, self.affiliate_progress_var.set, "Processamento concluído!")
+                window.after(0, lambda: self.affiliate_progress_bar.configure(value=100))
+                
+                # Mostrar resultado
+                window.after(0, lambda: messagebox.showinfo(
+                    "Sucesso",
+                    f"Processamento concluído!\n\n"
+                    f"✅ Links gerados: {success_count}\n"
+                    f"❌ Falhas: {error_count}\n"
+                    f"📁 Resultados salvos na pasta 'data'"
+                ))
+        
         except Exception as e:
-            console.print(f"\n[bold red]❌ Erro crítico: {e}[/bold red]")
+            window.after(0, lambda: messagebox.showerror("Erro", f"Erro inesperado:\n{str(e)}"))
+            window.after(0, self.affiliate_progress_var.set, f"Erro: {str(e)}")
+        
+        finally:
+            self.affiliate_processing = False
+            # Reabilitar botões
+            window.after(0, lambda: process_btn.configure(state="normal"))
+            window.after(0, lambda: close_btn.configure(text="Fechar"))
+    
+    def _execute_immediate_login(self):
+        """Executar login imediato sem precisar selecionar arquivo"""
+        try:
+            self.affiliate_processing = True
+            
+            # Criar janela de progresso simples para login
+            login_window = tk.Toplevel(self.root)
+            login_window.title("🔑 Login Manual")
+            login_window.geometry("400x200")
+            login_window.transient(self.root)
+            login_window.grab_set()
+            
+            # Centralizar janela
+            login_window.update_idletasks()
+            x = (login_window.winfo_screenwidth() // 2) - (400 // 2)
+            y = (login_window.winfo_screenheight() // 2) - (200 // 2)
+            login_window.geometry(f"400x200+{x}+{y}")
+            
+            # Frame principal
+            frame = ttk.Frame(login_window, padding="20")
+            frame.pack(fill=tk.BOTH, expand=True)
+            
+            # Label informativo
+            info_label = ttk.Label(
+                frame,
+                text="🌐 Abrindo navegador para login manual...\n\nFaça seu login e feche o navegador quando terminar.",
+                font=("Arial", 10),
+                justify="center"
+            )
+            info_label.pack(pady=(0, 20))
+            
+            # Progress bar
+            progress_bar = ttk.Progressbar(frame, mode="indeterminate", length=300)
+            progress_bar.pack(pady=(0, 20))
+            progress_bar.start()
+            
+            # Botão cancelar
+            cancel_btn = ttk.Button(frame, text="Cancelar", command=lambda: self._cancel_immediate_login(login_window))
+            cancel_btn.pack()
+            
+            # Executar login em thread
+            thread = threading.Thread(
+                target=self._run_immediate_login,
+                args=(login_window, progress_bar)
+            )
+            thread.daemon = True
+            thread.start()
+            
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao iniciar login imediato:\n{str(e)}")
+            self.affiliate_processing = False
+    
+    def _run_immediate_login(self, window, progress_bar):
+        """Executar login imediato em thread separada"""
+        try:
+            # Executar processamento assíncrono
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            async def login_process():
+                async with AffiliateManager() as affiliate_manager:
+                    return await affiliate_manager.process_product_file("", login_only_mode=True)
+            
+            results = loop.run_until_complete(login_process())
+            loop.close()
+            
+            # Parar progress bar
+            window.after(0, progress_bar.stop)
+            
+            # Verificar resultados
+            if results.get('login_only') and results.get('success'):
+                window.after(0, lambda: messagebox.showinfo(
+                    "Login Concluído",
+                    "✅ Login manual concluído com sucesso!\n\n"
+                    "💾 Seus cookies foram salvos no perfil\n"
+                    "🔄 Agora você pode processar arquivos normalmente"
+                ))
+            else:
+                error_msg = results.get('error', 'Erro desconhecido durante login')
+                window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante login manual:\n{error_msg}"))
+            
+            # Fechar janela
+            window.after(0, window.destroy)
+            
+        except Exception as e:
+            window.after(0, progress_bar.stop)
+            window.after(0, lambda: messagebox.showerror("Erro", f"Erro inesperado durante login:\n{str(e)}"))
+            window.after(0, window.destroy)
+        
+        finally:
+            self.affiliate_processing = False
+    
+    def _cancel_immediate_login(self, window):
+        """Cancelar login imediato"""
+        if messagebox.askyesno("Cancelar", "Deseja realmente cancelar o login?"):
+            self.affiliate_processing = False
+            window.destroy()
+    
+    def _update_affiliate_progress(self, current, total, message=""):
+        """Atualizar progresso da geração de links"""
+        if total > 0:
+            percentage = (current / total) * 100
+            self.affiliate_progress_bar.configure(value=percentage)
+        
+        if message:
+            progress_text = f"{message}"
+            if total > 0:
+                progress_text += f" ({current}/{total} - {percentage:.0f}%)"
+            self.affiliate_progress_var.set(progress_text)
+    
+    def _on_login_mode_change(self):
+        """Callback quando o modo login apenas é alterado"""
+        if self.login_only_var.get():
+            # Oferecer abertura imediata do navegador
+            response = messagebox.askyesno(
+                "🔑 Modo Login Apenas",
+                "✅ Modo Login Apenas ativado!\n\n"
+                "🌐 Quer abrir o navegador AGORA para fazer login?\n\n"
+                "👤 SIM: Abre navegador imediatamente\n"
+                "❌ NÃO: Fica marcado para usar depois\n\n"
+                "💾 Seus cookies serão salvos automaticamente"
+            )
+            
+            if response:
+                # Abrir navegador imediatamente
+                self._execute_immediate_login()
+            else:
+                # Só mostrar informativo se escolheu não abrir agora
+                messagebox.showinfo(
+                    "Modo Configurado",
+                    "✅ Modo Login Apenas configurado!\n\n"
+                    "🔄 Agora você pode:\n"
+                    "• Selecionar um arquivo e clicar 'Processar'\n"
+                    "• Ou desmarcar e marcar novamente para abrir agora\n\n"
+                    "⚠️ Nenhuma automação será executada neste modo"
+                )
+    
+    def _cancel_affiliate_processing(self, window):
+        """Cancelar processamento de links de afiliado"""
+        if messagebox.askyesno("Cancelar", "Deseja realmente cancelar o processamento?"):
+            self.affiliate_processing = False
+            window.destroy()
+    
+    def run(self):
+        """Executar aplicação"""
+        self.root.mainloop()
 
 def main():
     """Função principal"""
-    try:
-        app = ModernScraperCLI()
-        asyncio.run(app.run())
-    except KeyboardInterrupt:
-        console.print("\n[yellow]Sistema interrompido[/yellow]")
-    except Exception as e:
-        console.print(f"[red]Erro crítico: {e}[/red]")
+    app = MercadoLivreScraper()
+    app.run()
 
 if __name__ == "__main__":
     main()
