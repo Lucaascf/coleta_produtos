@@ -675,6 +675,43 @@ class PlaywrightEngine:
     
     # ===== MÉTODOS PARA SISTEMA DE AFILIADOS =====
     
+    async def open_for_manual_login(self) -> bool:
+        """Abrir navegador apenas para login manual - não executa automação"""
+        try:
+            print("🌐 Abrindo navegador para login manual...")
+            print("👤 Faça seu login no Mercado Livre e depois feche o navegador")
+            print("💾 Seus cookies serão salvos automaticamente")
+            print()
+            
+            # Navegar para página principal do Mercado Livre
+            await self.navigate_to_page(self.config.BASE_URL)
+            await asyncio.sleep(2)
+            
+            print("✅ Navegador aberto - você pode fazer login agora")
+            print("⚠️  IMPORTANTE: Feche o navegador quando terminar o login")
+            print("🔄 O sistema voltará ao menu principal automaticamente")
+            
+            # Aguardar até o usuário fechar o navegador
+            try:
+                while True:
+                    # Verificar se a página ainda está ativa
+                    if self.page.is_closed():
+                        break
+                    if self.context and self.context.pages and len(self.context.pages) == 0:
+                        break
+                    
+                    await asyncio.sleep(1)
+            except Exception:
+                # Navegador foi fechado
+                pass
+            
+            print("✅ Login manual concluído! Cookies salvos no perfil.")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Erro durante login manual: {e}")
+            return False
+    
     async def check_affiliate_login_status(self) -> bool:
         """Verificar se já está logado no Mercado Livre"""
         try:

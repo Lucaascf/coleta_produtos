@@ -277,9 +277,30 @@ class AffiliateManager:
             if len(failed_products) > 5:
                 console.print(f"  ... e mais {len(failed_products) - 5} produtos")
     
-    async def process_product_file(self, filepath: str) -> Dict[str, Any]:
+    async def process_product_file(self, filepath: str, login_only_mode: bool = False) -> Dict[str, Any]:
         """Processar arquivo de produtos completo"""
         try:
+            # Se modo login apenas, só abrir navegador para login manual
+            if login_only_mode:
+                console.print("🔑 Modo Login Apenas ativado")
+                console.print("🌐 Abrindo navegador para login manual...")
+                
+                # Abrir navegador apenas para login
+                success = await self.engine.open_for_manual_login()
+                
+                if success:
+                    return {
+                        "login_only": True,
+                        "success": True,
+                        "message": "Login manual concluído. Cookies salvos no perfil."
+                    }
+                else:
+                    return {
+                        "login_only": True,
+                        "success": False,
+                        "error": "Erro durante login manual"
+                    }
+            
             # Carregar produtos
             products = self.load_products_from_file(filepath)
             

@@ -916,6 +916,20 @@ class MercadoLivreScraper:
         
         ttk.Label(info_frame, text=info_text, font=("Arial", 9)).pack(anchor="w")
         
+        # Frame de opções
+        options_frame = ttk.LabelFrame(main_frame, text="🔧 Opções", padding="10")
+        options_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Checkbox para modo login apenas
+        self.login_only_var = tk.BooleanVar()
+        login_only_checkbox = ttk.Checkbutton(
+            options_frame,
+            text="🔑 Modo Login Apenas (só abrir navegador para fazer login, sem executar automação)",
+            variable=self.login_only_var,
+            command=self._on_login_mode_change
+        )
+        login_only_checkbox.pack(anchor="w", padx=10, pady=5)
+        
         # Frame de progresso (inicialmente oculto)
         self.affiliate_progress_frame = ttk.LabelFrame(main_frame, text="Progresso", padding="10")
         
@@ -960,12 +974,26 @@ class MercadoLivreScraper:
                 messagebox.showerror("Erro", "Arquivo selecionado não encontrado")
                 return
             
-            # Confirmar processamento
-            product_count = item['values'][2]
-            confirm = messagebox.askyesno(
-                "Confirmar Processamento",
-                f"Processar arquivo '{filename}' com {product_count} produtos?\n\nEsta operação pode demorar alguns minutos."
-            )
+            # Verificar se é modo login apenas
+            login_only_mode = self.login_only_var.get()
+            
+            if login_only_mode:
+                # Confirmar modo login apenas
+                confirm = messagebox.askyesno(
+                    "Confirmar Login Manual",
+                    f"🔑 Modo Login Apenas ativado\n\n"
+                    f"🌐 O navegador será aberto na página do Mercado Livre\n"
+                    f"👤 Você poderá fazer login manualmente\n"
+                    f"💾 Cookies serão salvos automaticamente\n\n"
+                    f"Continuar?"
+                )
+            else:
+                # Confirmar processamento normal
+                product_count = item['values'][2]
+                confirm = messagebox.askyesno(
+                    "Confirmar Processamento",
+                    f"Processar arquivo '{filename}' com {product_count} produtos?\n\nEsta operação pode demorar alguns minutos."
+                )
             
             if not confirm:
                 return
@@ -980,7 +1008,7 @@ class MercadoLivreScraper:
             # Executar processamento em thread
             thread = threading.Thread(
                 target=self._run_affiliate_generation,
-                args=(selected_file, affiliate_window, process_btn, close_btn)
+                args=(selected_file, affiliate_window, process_btn, close_btn, login_only_mode)
             )
             thread.daemon = True
             thread.start()
@@ -1003,7 +1031,7 @@ class MercadoLivreScraper:
         # Protocolo de fechamento
         affiliate_window.protocol("WM_DELETE_WINDOW", on_close)
     
-    def _run_affiliate_generation(self, file_path, window, process_btn, close_btn):
+    def _run_affiliate_generation(self, file_path, window, process_btn, close_btn, login_only_mode=False):
         """Executar geração de links em thread separada"""
         try:
             self.affiliate_processing = True
@@ -1013,7 +1041,10 @@ class MercadoLivreScraper:
                 window.after(0, self._update_affiliate_progress, current, total, message)
             
             # Atualizar UI inicial
-            window.after(0, self._update_affiliate_progress, 0, 100, "Iniciando processamento...")
+            if login_only_mode:
+                window.after(0, self._update_affiliate_progress, 0, 100, "Abrindo navegador para login manual...")
+            else:
+                window.after(0, self._update_affiliate_progress, 0, 100, "Iniciando processamento...")
             
             # Executar processamento assíncrono
             loop = asyncio.new_event_loop()
@@ -1021,7 +1052,7 @@ class MercadoLivreScraper:
             
             async def process():
                 async with AffiliateManager() as affiliate_manager:
-                    return await affiliate_manager.process_product_file(file_path)
+                    return await affiliate_manager.process_product_file(file_path, login_only_mode)
             
             results = loop.run_until_complete(process())
             loop.close()
@@ -1029,7 +1060,25 @@ class MercadoLivreScraper:
             # Verificar resultados
             if "error" in results:
                 window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante processamento:\n{results['error']}"))
+            elif results.get('login_only'):
+                # Modo login apenas
+                if results.get('success'):
+                    window.after(0, self.affiliate_progress_var.set, "Login manual concluído!")
+                    window.after(0, lambda: self.affiliate_progress_bar.configure(value=100))
+                    window.after(0, self.affiliate_stats_var.set, "✅ Cookies salvos com sucesso")
+                    
+                    # Mostrar resultado do login
+                    window.after(0, lambda: messagebox.showinfo(
+                        "Login Concluído",
+                        f"✅ Login manual concluído com sucesso!\n\n"
+                        f"💾 Seus cookies foram salvos no perfil\n"
+                        f"🔄 Agora você pode desmarcar 'Modo Login Apenas'\n"
+                        f"⚡ E processar seus arquivos normalmente"
+                    ))
+                else:
+                    window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante login manual:\n{results.get('error', 'Erro desconhecido')}"))
             else:
+                # Processamento normal
                 success_count = results.get('success_count', 0)
                 error_count = results.get('error_count', 0)
                 total_products = success_count + error_count
@@ -1062,6 +1111,104 @@ class MercadoLivreScraper:
             window.after(0, lambda: process_btn.configure(state="normal"))
             window.after(0, lambda: close_btn.configure(text="Fechar"))
     
+    def _execute_immediate_login(self):
+        """Executar login imediato sem precisar selecionar arquivo"""
+        try:
+            self.affiliate_processing = True
+            
+            # Criar janela de progresso simples para login
+            login_window = tk.Toplevel(self.root)
+            login_window.title("🔑 Login Manual")
+            login_window.geometry("400x200")
+            login_window.transient(self.root)
+            login_window.grab_set()
+            
+            # Centralizar janela
+            login_window.update_idletasks()
+            x = (login_window.winfo_screenwidth() // 2) - (400 // 2)
+            y = (login_window.winfo_screenheight() // 2) - (200 // 2)
+            login_window.geometry(f"400x200+{x}+{y}")
+            
+            # Frame principal
+            frame = ttk.Frame(login_window, padding="20")
+            frame.pack(fill=tk.BOTH, expand=True)
+            
+            # Label informativo
+            info_label = ttk.Label(
+                frame,
+                text="🌐 Abrindo navegador para login manual...\n\nFaça seu login e feche o navegador quando terminar.",
+                font=("Arial", 10),
+                justify="center"
+            )
+            info_label.pack(pady=(0, 20))
+            
+            # Progress bar
+            progress_bar = ttk.Progressbar(frame, mode="indeterminate", length=300)
+            progress_bar.pack(pady=(0, 20))
+            progress_bar.start()
+            
+            # Botão cancelar
+            cancel_btn = ttk.Button(frame, text="Cancelar", command=lambda: self._cancel_immediate_login(login_window))
+            cancel_btn.pack()
+            
+            # Executar login em thread
+            thread = threading.Thread(
+                target=self._run_immediate_login,
+                args=(login_window, progress_bar)
+            )
+            thread.daemon = True
+            thread.start()
+            
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao iniciar login imediato:\n{str(e)}")
+            self.affiliate_processing = False
+    
+    def _run_immediate_login(self, window, progress_bar):
+        """Executar login imediato em thread separada"""
+        try:
+            # Executar processamento assíncrono
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            async def login_process():
+                async with AffiliateManager() as affiliate_manager:
+                    return await affiliate_manager.process_product_file("", login_only_mode=True)
+            
+            results = loop.run_until_complete(login_process())
+            loop.close()
+            
+            # Parar progress bar
+            window.after(0, progress_bar.stop)
+            
+            # Verificar resultados
+            if results.get('login_only') and results.get('success'):
+                window.after(0, lambda: messagebox.showinfo(
+                    "Login Concluído",
+                    "✅ Login manual concluído com sucesso!\n\n"
+                    "💾 Seus cookies foram salvos no perfil\n"
+                    "🔄 Agora você pode processar arquivos normalmente"
+                ))
+            else:
+                error_msg = results.get('error', 'Erro desconhecido durante login')
+                window.after(0, lambda: messagebox.showerror("Erro", f"Erro durante login manual:\n{error_msg}"))
+            
+            # Fechar janela
+            window.after(0, window.destroy)
+            
+        except Exception as e:
+            window.after(0, progress_bar.stop)
+            window.after(0, lambda: messagebox.showerror("Erro", f"Erro inesperado durante login:\n{str(e)}"))
+            window.after(0, window.destroy)
+        
+        finally:
+            self.affiliate_processing = False
+    
+    def _cancel_immediate_login(self, window):
+        """Cancelar login imediato"""
+        if messagebox.askyesno("Cancelar", "Deseja realmente cancelar o login?"):
+            self.affiliate_processing = False
+            window.destroy()
+    
     def _update_affiliate_progress(self, current, total, message=""):
         """Atualizar progresso da geração de links"""
         if total > 0:
@@ -1073,6 +1220,33 @@ class MercadoLivreScraper:
             if total > 0:
                 progress_text += f" ({current}/{total} - {percentage:.0f}%)"
             self.affiliate_progress_var.set(progress_text)
+    
+    def _on_login_mode_change(self):
+        """Callback quando o modo login apenas é alterado"""
+        if self.login_only_var.get():
+            # Oferecer abertura imediata do navegador
+            response = messagebox.askyesno(
+                "🔑 Modo Login Apenas",
+                "✅ Modo Login Apenas ativado!\n\n"
+                "🌐 Quer abrir o navegador AGORA para fazer login?\n\n"
+                "👤 SIM: Abre navegador imediatamente\n"
+                "❌ NÃO: Fica marcado para usar depois\n\n"
+                "💾 Seus cookies serão salvos automaticamente"
+            )
+            
+            if response:
+                # Abrir navegador imediatamente
+                self._execute_immediate_login()
+            else:
+                # Só mostrar informativo se escolheu não abrir agora
+                messagebox.showinfo(
+                    "Modo Configurado",
+                    "✅ Modo Login Apenas configurado!\n\n"
+                    "🔄 Agora você pode:\n"
+                    "• Selecionar um arquivo e clicar 'Processar'\n"
+                    "• Ou desmarcar e marcar novamente para abrir agora\n\n"
+                    "⚠️ Nenhuma automação será executada neste modo"
+                )
     
     def _cancel_affiliate_processing(self, window):
         """Cancelar processamento de links de afiliado"""
