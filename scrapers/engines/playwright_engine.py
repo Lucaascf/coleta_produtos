@@ -319,22 +319,8 @@ class PlaywrightEngine:
                             original_price = potential_original
                             break
             
-            # URL do produto - buscar especificamente links de produtos
-            product_url = None
-            link_selectors = [
-                '.poly-component__title[href]',  # Link do título nas ofertas
-                'a.ui-search-link[href]',  # Link na busca normal
-                'h3 a[href]',  # Link no título
-                'a[href*="/p/"], a[href*="ML"]'  # Links que contenham produto
-            ]
-            
-            for selector in link_selectors:
-                link_elem = element.select_one(selector)
-                if link_elem:
-                    href = link_elem.get('href', '')
-                    if href and ('ML' in href or '/p/' in href):
-                        product_url = href if href.startswith('http') else f"{self.config.BASE_URL}{href}"
-                        break
+            # URL do produto - extrair URL real (não de tracking)
+            product_url = await self.extract_real_product_url(element)
             
             # Imagem
             image_url = None
@@ -797,6 +783,60 @@ class PlaywrightEngine:
             print(f"❌ Erro ao navegar para linkbuilder: {e}")
             return False
     
+    async def extract_real_product_url(self, element) -> Optional[str]:
+        """Extrair URL real do produto navegando se necessário"""
+        try:
+            # Primeiro tentar seletores que podem conter URLs diretas
+            direct_url_selectors = [
+                'a[href*="/p/ML"]',  # Links diretos para produtos
+                'a[href*="www.mercadolivre.com.br"][href*="/p/"]',  # URLs completas de produtos
+            ]
+            
+            for selector in direct_url_selectors:
+                link_elem = element.select_one(selector)
+                if link_elem:
+                    href = link_elem.get('href', '')
+                    if href and '/p/ML' in href:
+                        return href if href.startswith('http') else f"{self.config.BASE_URL}{href}"
+            
+            # Se não encontrou URL direta, tentar extrair do link de tracking
+            tracking_selectors = [
+                '.poly-component__title[href]',
+                'a.ui-search-link[href]',
+                'h3 a[href]',
+                'a[href*="mclics"]',  # Links de tracking
+            ]
+            
+            for selector in tracking_selectors:
+                link_elem = element.select_one(selector)
+                if link_elem:
+                    href = link_elem.get('href', '')
+                    if href:
+                        # Se é URL de tracking, tentar extrair ID do produto
+                        if 'mclics' in href or 'click' in href:
+                            # Navegar rapidamente para obter URL real
+                            try:
+                                current_url = self.page.url
+                                await self.page.goto(href, wait_until='domcontentloaded', timeout=10000)
+                                real_url = self.page.url
+                                
+                                # Voltar para página original
+                                await self.page.goto(current_url, wait_until='domcontentloaded', timeout=10000)
+                                
+                                if '/p/ML' in real_url:
+                                    return real_url
+                            except:
+                                pass
+                        
+                        # Fallback: usar href original se contém indicadores de produto
+                        elif 'ML' in href or '/p/' in href:
+                            return href if href.startswith('http') else f"{self.config.BASE_URL}{href}"
+            
+            return None
+            
+        except Exception as e:
+            return None
+    
     async def generate_affiliate_links_batch_single_request(self, product_urls: List[str], retry_count: int = 0) -> List[str]:
         """Gerar links de afiliado para múltiplas URLs em uma única requisição"""
         max_retries = 2
@@ -826,7 +866,7 @@ class PlaywrightEngine:
                 print(f"❌ Erro ao procurar textarea: {e}")
                 return []
             
-            # Preparar todas as URLs ORIGINAIS em uma string (uma por linha)
+            # Preparar todas as URLs em uma string (uma por linha)
             urls_text = "\n".join(product_urls)
             print(f"📝 Inserindo {len(product_urls)} URLs no campo...")
             print(f"📋 Primeiro link: {product_urls[0][:70]}...")
